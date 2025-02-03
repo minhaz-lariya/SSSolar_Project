@@ -1,0 +1,204 @@
+﻿
+@{
+    ViewData["Title"] = "Notification  | SA SOLAR EXPERTS";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    table tr td:nth-child(1) {
+        text-align: justify;
+    }
+</style>
+
+<input type="hidden" id="txtId" value="0" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-10 mb-2">
+                        <b>Message</b><label class="error" id="lblErrMessage"></label>
+                        <input type="text" id="txtMessage" name="txtMessage" placeholder="Message" class="form-control" />
+                    </div>
+                    <div class="col-md-2 mb-3">
+                        <b>Status</b>
+                        <label class="form-control">
+                            <input type="checkbox" id="chkStatus" /> &nbsp;Is Active
+                        </label>
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <button type="button" id="btnSave" class="btn btn-primary waves-effect waves-light">Save</button>
+                        <button type="reset" onclick="cancleForm()" class="btn btn-danger">Cancle</button>
+                    </div>
+                    <div class="col-md-12 mb-2 table-responsive">
+                        <table id="datatable" border="1" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Message</th>
+                                    <th style="width: 150px;">Created At</th>
+                                    <th style="width: 50px;"></th>
+                                    <th style="width: 50px;"></th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            var ID = $("#txtId").val();
+            var Cnt = 0;
+            Cnt = IsEmpty("txtMessage", "lblErrMessage", Cnt);
+
+            if (Cnt == 0) {
+                $("#btnSave").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                $("#btnSave").prop("disabled", true);
+
+                var jsonRequest = {
+                    "Message": $("#txtMessage").val().toUpperCase(),
+                    "Id": ID,
+                    "Status": $('#chkStatus').is(':checked') ? "true" : "false"
+                };
+
+                var requestURL = "@Url.Content("~/api/newNotification")";
+
+                if (ID != 0) {
+                    requestURL = "@Url.Content("~/api/EditNotification")";
+                }
+
+                $.ajax({
+                    url: requestURL,
+                    type: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(jsonRequest),
+                    success: function (response) {
+                        if (response.status == "OK") {
+                            dataTable.ajax.reload(null, false);
+                            $("#btnSave").html("Save");
+                            $("#btnSave").prop("disabled", false);
+                            cancleForm();
+                        }
+                        console.log(response.status);
+                    }
+                });
+            }
+        });
+    });
+
+    function cancleForm() {
+        $("#txtId").val("0");
+        $("#txtMessage").val("");
+        $("#chkStatus").prop("checked", false);
+        $("#btnSave").html("Save");
+    }
+
+    function getProductMastersEdit(Id) {
+        const $loadingOverlay = $(`<div class="loading-overlay"><i class='fas fa-spinner fa-pulse'></i>&nbsp;Loading...</div>`).appendTo('body');
+        $loadingOverlay.show();
+        $.get("@Url.Content("~/api/")detailNotification/" + Id)
+        .done(function (data, status) {
+            if (data.status == "OK") {
+                var Element = data.result;
+                $("#txtId").val(Id);
+                $("#txtMessage").val(Element.message);
+                if (Element.status == "true") {
+                    $("#chkStatus").prop("checked", true);
+                }
+                $("#btnSave").html("Update data");
+            }
+            else {
+                alert("Something Went Wrong");
+            }
+            $loadingOverlay.remove();
+        })
+        .fail(function () {
+            alert("Error");
+        });
+    }
+
+    function DeleteData(Id, o) {
+        if (confirm("Are You Sure Want to Delete this Record..!!")) {
+            var currentRow = o.parentNode.parentNode.rowIndex;
+            $("#datatable tr").eq(currentRow).addClass("selected");
+
+            var Path = "@Url.Content("~/api/")deleteNotification/" + Id;
+
+            $.ajax({
+                url: Path,
+                type: "delete",
+                processData: false,  // tell jQuery not to process the data
+                contentType: false   // tell jQuery not to set contentType
+            }).done(function (data) {
+                console.log(data);
+
+                if (data.status == "OK") {
+                    dataTable.ajax.reload(null, false);
+                }
+            });
+        }
+    }
+
+    var dataTable = $("#datatable").DataTable({
+        "ajax": {
+            "url": "@Url.Content("~/api/Notifications/Admin")",
+            "dataSrc": "result"
+        },
+        "aoColumns": [
+            { mData: 'message' },
+            { mData: 'createdAt' },
+            { mData: 'status' },
+            { mData: 'id' },
+            { mData: 'id' }
+        ],
+        "paginate": true,
+        "retrieve": true,
+        "responsive": false,
+        "destroy": true,
+        "autoWidth": false,
+        'columnDefs': [
+            {
+                'targets': 3,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    var Edit = "getProductMastersEdit('" + data + "')";
+                    return '<i class="fas fa-edit text-primary" style="font-size: 25px;" data-toggle="modal" data-target="#ProductMaster" onclick="' + Edit + '" ></i>';
+                }
+            },
+            {
+                'targets': 1,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return `<span style="display: none;">sortDateTime(${data})</span>` + setData(data);
+                }
+            },
+            {
+                'targets': 4,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+                'render': function (data, type, full, meta) {
+                    var Delete = "DeleteData('" + data + "', this)";
+                    return '<i class="fas fa-trash text-primary" style="font-size: 25px;" onclick="' + Delete + '" ></i>';
+                }
+            },
+            {
+                'targets': 2,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return data === true ? `<i style="font-size: 25px;" class='fas fa-eye text-primary'></i>` : `<i style="font-size: 25px;" class='fas fa-eye-slash text-primary'></i>`;
+                }
+            }
+        ]
+    });
+</script>

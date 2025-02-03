@@ -1,0 +1,67 @@
+﻿
+@{
+    ViewData["Title"] = "Contact Us";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Contact Us</a></li>
+		</ol>
+	</nav>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row d-flex align-items-stretch">
+			<div class="col-lg-8 align-self-center">
+				<iframe style="width: 100%;height: 450px;" src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d14317.991226786693!2d28.0169833!3d-26.2130099!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1e950952eeec0001%3A0xb6fe17635adcd702!2sSA%20Solar%20Experts%20Pty%20Ltd!5e0!3m2!1sen!2sza!4v1721205614881!5m2!1sen!2sza" frameborder="0"></iframe>
+			</div>
+			<div class="col-lg-4 align-self-center">
+				<div class="contact-form-info" style="background-image:url('@Url.Content("~/assets/img/contact.jpg")');">
+					<center>
+						<h2 font-size: 20px;>Contact Us</h2>
+					</center>
+					<hr style="color: white; border: 2px solid white;" />
+					<div class="contact-info-list">
+						<div class="item mb-20">
+							<div class="icon">
+								<i class="fas fa-home"></i>
+							</div>
+							<div class="content">
+								<h4>Locations</h4>
+								<p style="font-weight: bold; color: white;">
+									Shop no: 58, China Multiplex, <br />
+									160 Main Reef (Opp. Makro) <br />
+									Crown Mines,<br />
+									Johannesburg City.
+								</p>
+							</div>
+						</div>
+						<div class="item mb-20">
+							<div class="icon">
+								<i class="far fa-envelope"></i>
+							</div>
+							<div class="content">
+								<h4>Drop A Mail</h4>
+								<p style="font-weight: bold; color: white;">bilal.bali18@gmail.com</p>
+							</div>
+						</div>
+						<div class="item">
+							<div class="icon">
+								<i class="fas fa-mobile-alt"></i>
+							</div>
+							<div class="content">
+								<h4>Call Us</h4>
+								<p style="font-weight: bold; color: white;">+27 074 275 3464</p>
+								<p style="font-weight: bold; color: white;">+27 083 560 9269</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

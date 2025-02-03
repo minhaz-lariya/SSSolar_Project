@@ -1,0 +1,127 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<style>
+    .ellipsis {
+        width: 200px; /* Set the desired width for the container */
+        white-space: nowrap; /* Prevent text from wrapping */
+        overflow: hidden; /* Hide the overflowing text */
+        text-overflow: ellipsis; /* Add "..." when text overflows */
+        display: inline-block; /* Treat the element as an inline block */
+    }
+</style>
+
+<div class="row">
+
+    <div class="col-xl-4 mb-2">
+        <div class="card">
+            <div class="d-flex align-items-end row">
+                <div class="col-7">
+                    <div class="card-body text-nowrap">
+                        <h5 class="card-title mb-0 ellipsis">Welcome <script>document.write(getCookie("AdminFullName"));</script>! 🎉</h5>
+                        <p class="mb-2">Welcome to SA Solar Experts</p>
+                        <p>IP Address</p>
+                        <h4 style="margin-top: -20px;" class="text-primary mb-1" id="ip-address">
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function () {
+                                    // Fetch the IP address from the API
+                                    fetch("https://api.ipify.org?format=json")
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            // Display the IP address on the screen
+                                            document.getElementById("ip-address").textContent = data.ip;
+                                        })
+                                        .catch(error => {
+                                            console.error("Error fetching IP address:", error);
+                                        });
+                                });
+                            </script>
+                        </h4>
+                    </div>
+                </div>
+                <div class="col-5 text-center text-sm-left">
+                    <div class="card-body pb-0 px-0 px-md-4">
+                        <img src="@Url.Content("~/admin_assets/img/illustrations/card-advance-sale.png")" height="140" alt="view sales">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-8 col-md-12 mb-2">
+        <div class="card h-100">
+            <div class="card-header d-flex justify-content-between">
+                <h5 class="card-title mb-0">Dashboard</h5>
+                <small class="text-muted">Updated 1 minute ago</small>
+            </div>
+            <div class="card-body d-flex align-items-end">
+                <div class="w-100">
+                    <div class="row gy-3">
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge rounded bg-label-primary me-4 p-2"><i class="fas fa-solar-panel text-primary"></i></div>
+                                <div class="card-info">
+                                    <h5 id="lblProducts" class="mb-0 text-primary">0</h5>
+                                    <small>Products</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge rounded bg-label-info me-4 p-2"><i class="fas fa-star text-primary"></i></div>
+                                <div class="card-info">
+                                    <h5 id="lblPackages" class="mb-0 text-primary">0</h5>
+                                    <small>Packages</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge rounded bg-label-danger me-4 p-2"><i class="fas fa-bullhorn text-primary"></i></div>
+                                <div class="card-info">
+                                    <h5 id="lblNitification" class="mb-0 text-primary">0</h5>
+                                    <small>Nitification</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-6 mb-2">
+                            <div class="d-flex align-items-center">
+                                <div class="badge rounded bg-label-success me-4 p-2"><i class="fas fa-plug text-primary"></i></div>
+                                <div class="card-info">
+                                    <h5 id="lblAccessories" class="mb-0 text-primary">0</h5>
+                                    <small>Accessories</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function(){
+        $.get("@Url.Content("~/api/dashboaard")")
+        .done(function (data, status) {
+            if (data.status == "OK") {
+                var Element = data.result;
+                $("#lblProducts").html(Element.products);
+                $("#lblNitification").html(Element.notification);
+                $("#lblPackages").html(Element.packages);
+                $("#lblAccessories").html(Element.accessories);
+            }
+            else {
+                alert("Something Went Wrong");
+            }
+        })
+        .fail(function () {
+            alert("Error");
+        });
+    });
+</script>

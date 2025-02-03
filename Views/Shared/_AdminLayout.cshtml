@@ -1,0 +1,618 @@
+﻿<!DOCTYPE html>
+<html lang="en" class="light-style layout-navbar-fixed layout-menu-fixed layout-compact " dir="ltr" data-theme="theme-default" data-assets-path="@Url.Content("~/admin_assets/")" data-template="vertical-menu-template" data-style="light">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    @{
+        var link = string.IsNullOrEmpty(ViewBag.link) ? "sasolarexpertss.com" : ViewBag.Title;
+        var keywords = string.IsNullOrEmpty(ViewBag.keywords) ? "Solar wholesale company Johannesburg, Solar panel installations Johannesburg,High - quality solar products, Solar energy solutions South Africa, Solar batteries and inverters,Solar power systems Johannesburg, Affordable solar solutions, Renewable energy products South Africa, Solar power installation services, Solar accessories wholesale, Energy-saving solar solutions, Custom solar energy systems, Solar suppliers Johannesburg, Solar product distributor, Photovoltaic systems South Africa, Eco-friendly energy solutions, Residential and commercial solar systems, Professional solar installers South Africa, Off-grid solar systems, Sustainable energy products Johannesburg" : ViewBag.keywords;
+        var description = string.IsNullOrEmpty(ViewBag.description) ? "SA Solar Experts is a leading solar wholesale company located in Johannesburg at China Multiplex, offering high-quality solar products at competitive prices. We specialize in solar panel installations, solar batteries, inverters, and a full range of solar accessories. Our dedicated team of solar experts brings years of industry experience, allowing us to deliver tailored solutions that meet our clients' unique energy needs and help them reduce long-term energy costs." : ViewBag.description;
+        var seoImage = string.IsNullOrEmpty(ViewBag.seoImage) ? @Url.Content("~/sasalogo.png") : ViewBag.seoImage;
+    }
+
+    <title>@ViewBag.Title</title>
+    <meta name="title" property="og:title" content="@link">
+    <meta name="Keywords" content="@keywords">
+    <meta name="Description" content="@description">
+    <meta property="og:image" content="@seoImage">
+    <link rel="icon" href="@Url.Content("~/favicon.ico")">
+    <script>
+        (function (w, d, s, l, i) {
+            w[l] = w[l] || []; w[l].push({
+                'gtm.start':
+                    new Date().getTime(), event: 'gtm.js'
+            }); var f = d.getElementsByTagName(s)[0],
+                j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : ''; j.async = true; j.src =
+                    'https://www.googletagmanager.com/gtm.js?id=' + i + dl; f.parentNode.insertBefore(j, f);
+        })(window, document, 'script', 'dataLayer', 'GTM-5J3LMKC');
+    </script>
+    <!-- End Google Tag Manager -->
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="@Url.Content("~/admin_assets/img/favicon/favicon.ico")" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&ampdisplay=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/fonts/fontawesome.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/fonts/tabler-icons.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/fonts/flag-icons.css")" />
+
+    <!-- Core CSS -->
+
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/css/rtl/core.css")" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/css/rtl/theme-default.css")" class="template-customizer-theme-css" />
+
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/css/demo.css")" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/node-waves/node-waves.css")" />
+
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/typeahead-js/typeahead.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/datatables-bs5/datatables.bootstrap5.css")">
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/datatables-responsive-bs5/responsive.bootstrap5.css")">
+    <link rel="stylesheet" href="@Url.Content("~/admin_assets/vendor/libs/flatpickr/flatpickr.css")" />
+    <script src="@Url.Content("~/admin_assets/vendor/libs/jquery/jquery.js")"></script>
+    <!-- Page CSS -->
+    <!-- Helpers -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/js/helpers.js")"></script>
+    <script src="@Url.Content("~/admin_assets/js/config.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/Select2/select2.min.css")" />
+    <script src="@Url.Content("~/Select2/select2.full.min.js")"></script>
+    
+    <link href="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.css" rel="stylesheet">
+    <script src="https://cdn.datatables.net/v/dt/dt-2.1.8/datatables.min.js"></script>
+    <script src="@Url.Content("~/Validation.js")"></script>
+    <script src="@Url.Content("~/Cookie.js")"></script>
+    
+    <script>
+        if (!checkCookie("AdminId")) {
+            window.location.href = "@Url.Content("~/Admin/Authentication")";
+        }
+    </script>
+
+
+    <style>
+
+        .pac-container {
+            z-index: 9999;
+        }
+
+        ul.auto-complete-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            position: absolute;
+            z-index: 1500;
+            max-height: 250px;
+            overflow: auto;
+        }
+
+        input[type="text"], textarea {
+            text-transform: uppercase;
+        }
+
+        .error{
+            color: red
+        }
+
+        .five-line {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-size: 10px;
+        }
+
+        td{
+            font-size: 12px;
+        }
+
+        .text-right{
+            text-align: right;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.2em;
+            height: 0.2em
+        }
+
+        ::-webkit-scrollbar-button {
+            background: #ccc
+        }
+
+        ::-webkit-scrollbar-track-piece {
+            background: #888
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #eee
+        }
+
+        /* Style for the loading overlay */
+        .loading-overlay {
+            display: none; /* Initially hidden */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw; /* Full viewport width */
+            height: 100vh; /* Full viewport height */
+            background: rgba(0, 0, 0, 0.5); /* Transparent black background */
+            z-index: 10000; /* Ensure it appears above other elements */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+            overflow: hidden; /* Prevent scrolling when overlay is visible */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar  ">
+        <div class="layout-container">
+            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
+                <div class="app-brand demo ">
+                    <a href="@Url.Content("~/Admin/Home")" class="app-brand-link">
+                        <img src="@Url.Content("~/sasalogo.png")" style="width: 100%" />
+                    </a>
+                </div>
+
+                <div class="menu-inner-shadow"></div>
+                <ul class="menu-inner py-1">
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/Home")" class="menu-link">
+                            <i class="menu-icon fas fa-home text-primary"></i>
+                            Home
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/Categories")" class="menu-link">
+                            <i class="menu-icon fas fa-list text-primary"></i>
+                            Category
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/Products")" class="menu-link">
+                            <i class="menu-icon fas fa-box text-primary"></i>
+                            Products
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/Special-Packages")" class="menu-link">
+                            <i class="menu-icon fas fa-star text-primary"></i>
+                            Special Packages
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/UploadSliders")" class="menu-link">
+                            <i class="menu-icon fas fa-image text-primary"></i>
+                            Slider
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a href="@Url.Content("~/Admin/Notification")" class="menu-link">
+                            <i class="menu-icon fas fa-bullhorn text-primary"></i>
+                            Notification
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a data-bs-toggle="modal" data-bs-target="#ChangePassword" class="menu-link">
+                            <i class="menu-icon fas fa-key text-primary"></i>
+                            Change Password
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a data-bs-toggle="modal" data-bs-target="#ChangeProfile" class="menu-link">
+                            <i class="menu-icon fas fa-user-circle text-primary"></i>
+                            Change Profile
+                        </a>
+                    </li>
+                    <li class="menu-item">
+                        <a data-bs-target="#LogoutModal" data-bs-toggle="modal" class="menu-link">
+                            <i class="menu-icon fas fa-sign-out-alt text-primary"></i>
+                            Logout
+                        </a>
+                    </li>
+                    @* <li class="menu-item active open">
+                        <a href="javascript:void(0);" class="menu-link menu-toggle">
+                            <i class="menu-icon tf-icons ti ti-layout-grid"></i>
+                            <div data-i18n="Datatables">Datatables</div>
+                        </a>
+                        <ul class="menu-sub">
+                            <li class="menu-item">
+                                <a href="tables-datatables-basic.html" class="menu-link">
+                                    <div data-i18n="Basic">Basic</div>
+                                </a>
+                            </li>
+                            <li class="menu-item active">
+                                <a href="tables-datatables-advanced.html" class="menu-link">
+                                    <div data-i18n="Advanced">Advanced</div>
+                                </a>
+                            </li>
+                            <li class="menu-item">
+                                <a href="tables-datatables-extensions.html" class="menu-link">
+                                    <div data-i18n="Extensions">Extensions</div>
+                                </a>
+                            </li>
+                        </ul>
+                    </li> *@
+                </ul>
+            </aside>
+            <!-- / Menu -->
+            <!-- Layout container -->
+            <div class="layout-page">
+                <nav class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme" id="layout-navbar">
+                    <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0   d-xl-none ">
+                        <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+                            <i class="ti ti-menu-2 ti-md"></i>
+                        </a>
+                    </div>
+                    <style>
+                        @@media (max-width: 767px) {
+                            .hidden-mobile {
+                                display: none;
+                            }
+                            
+                        }
+
+                    </style>
+
+                    <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+
+
+                        <div class="navbar-nav align-items-center">
+                            <!-- Display message only on mobile devices (xs and sm screens) -->
+                            <div class="nav-item navbar-search-wrapper mb-0 d-none d-md-block">
+                                <b>Welcome to SA Solar Experts, <script>document.write(getCookie("AdminFullName"));</script></b>
+                            </div>
+
+                            <!-- Display message only on medium and larger devices (md and above) -->
+                            <div class="nav-item navbar-search-wrapper mb-0 d-block d-md-none">
+                                <b style="font-size: 12px;">Welcome, <script>document.write(getCookie("AdminFullName"));</script></b>
+                            </div>
+                        </div>
+
+
+                        <ul class="navbar-nav flex-row align-items-center ms-auto">
+
+                            <!-- User -->
+                            <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                                <a class="nav-link dropdown-toggle hide-arrow p-0" href="javascript:void(0);" data-bs-toggle="dropdown">
+                                    <div class="avatar avatar-online">
+                                        <img src="@Url.Content("~/Photos/user_icon.png")" alt class="rounded-circle">
+                                    </div>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item mt-0" href="pages-account-settings-account.html">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-shrink-0 me-2">
+                                                    <div class="avatar avatar-online">
+                                                        <img src="@Url.Content("~/Photos/user_icon.png")" alt class="rounded-circle">
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <h6 class="mb-0"><script>document.write(getCookie("AdminFullName"));</script></h6>
+                                                    <small class="text-muted">Admin</small>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <div class="dropdown-divider my-1 mx-n2"></div>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="modal" data-bs-target="#ChangeProfile" class="dropdown-item" href="#">
+                                            <i class="fas fa-user-circle text-primary me-3 ti-md"></i><span class="align-middle">My Profile</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a data-bs-toggle="modal" data-bs-target="#ChangePassword" class="dropdown-item" href="#">
+                                            <i class="fas fa-key me-3 ti-md text-primary"></i><span class="align-middle">Change Password</span>
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <div class="dropdown-divider my-1 mx-n2"></div>
+                                    </li>
+                                    <li>
+                                        <div class="d-grid px-2 pt-2 pb-1">
+                                            <a data-bs-target="#LogoutModal" data-bs-toggle="modal" class="btn btn-sm btn-danger d-flex" href="#" target="_blank">
+                                                <small class="align-middle">Logout</small>
+                                                <i class="fas fa-sign-out-alt ms-2 ti-14px"></i>
+                                            </a>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Search Small Screens -->
+                    <div class="navbar-search-wrapper search-input-wrapper  d-none">
+                        <input type="text" class="form-control search-input container-xxl border-0" placeholder="Search..." aria-label="Search...">
+                        <i class="ti ti-x search-toggler cursor-pointer"></i>
+                    </div>
+                </nav>
+                <div class="content-wrapper">
+                    <div class="container-xxl flex-grow-1 container-p-y">
+                        @RenderBody()
+                    </div>
+                    <!-- Footer -->
+                    <footer class="content-footer footer bg-footer-theme">
+                        <div class="container-xxl">
+                            <div class="footer-container d-flex align-items-center justify-content-between py-4 flex-md-row flex-column">
+                                <div class="text-body">
+                                    © <script>document.write(new Date().getFullYear())</script>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                    <div class="content-backdrop fade"></div>
+                </div>
+                <!-- Content wrapper -->
+            </div>
+            <!-- / Layout page -->
+        </div>
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+        <!-- Drag Target Area To SlideIn Menu On Small Screens -->
+        <div class="drag-target"></div>
+    </div>
+
+    <div class="modal fade" id="LogoutModal" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Are you sure want to logout..!</h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="confirmLogout()" id="btnLogout" name="btnLogout" class="btn btn-success">Yes</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="ChangePassword" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Change Password</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="ChangePasswordForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <b>Old </b><span id="lblOldPass" style="color:red">*</span>
+                                <input type="password" name="txtOldPass" class="form-control" id="txtOldPass" placeholder="Old Password" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <b>New </b><span id="lblNewPass" style="color:red">*</span>
+                                <input type="password" name="txtNewPass" id="txtNewPass" class="form-control" placeholder="New Password" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <b>Confirm</b><span id="lblConfirmPass" style="color:red">*</span>
+                                <input type="password" name="txtConfirmPass" id="txtConfirmPass" class="form-control" placeholder="Confirm Password" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <button type="button" class="btn btn-primary" id="btnChangePass" name="btnChangePass">Save</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="ChangeProfile" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Profile</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="ChangeProfileForm">
+                        <div class="row">
+                            <div class="col-md-12 mb-2">
+                                <b>Fullname </b><span id="lblFullName" style="color:red">*</span>
+                                <input type="text" name="txtFullName" class="form-control" id="txtFullName" placeholder="Fullname" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <b>Username </b><span id="lblUserName" style="color:red">*</span>
+                                <input type="text" name="txtUserName" class="form-control" id="txtUserName" placeholder="UserName" />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <b>Contact No.</b><span id="lblContactNo" style="color:red">*</span>
+                                <input type="text" name="txtContactNo" class="form-control" id="txtContactNo" placeholder="Contact No." />
+                            </div>
+                            <div class="col-md-6 mb-2">
+                                <b>Alternate No. </b><span id="lblAlternateNo" style="color:red">*</span>
+                                <input type="text" name="txtAlternateNo" class="form-control" id="txtAlternateNo" placeholder="Alternate No." />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <b>Email </b><span id="lblEmail" style="color:red">*</span>
+                                <input type="text" name="txtEmail" class="form-control" id="txtEmail" placeholder="Email" />
+                            </div>
+                            <div class="col-md-12 mb-2">
+                                <button type="button" class="btn btn-primary" id="btnChangeProfile" name="btnChangeProfile">Save</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        function confirmLogout() {
+            deleteCookie("AdminId");
+            deleteCookie("AdminFullName");
+            window.location.href = "@Url.Content("~/Admin/Authentication")";
+        }
+
+        $(document).ready(function () {
+            $.ajax({
+                url: "@Url.Content("~/api/adminDetail/")" + getCookie("AdminId"),
+                type: "GET",
+                contentType: "application/json"
+            }).done(function (data) {
+                if (data.status == "OK") {
+                    var Element = data.result;
+                    $("#txtFullName").val(Element.fullName);
+                    $("#txtUserName").val(Element.userName);
+                    $("#txtContactNo").val(Element.contactNo);
+                    $("#txtAlternateNo").val(Element.alternateNo);
+                    $("#txtEmail").val(Element.email);
+                }
+            });
+
+
+            $("#btnChangeProfile").click(function () {
+                var Cnt = 0;
+                Cnt = IsEmpty("txtFullName", "lblFullName", Cnt);
+                Cnt = IsEmpty("txtUserName", "lblUserName", Cnt);
+                Cnt = IsEmpty("txtContactNo", "lblContactNo", Cnt);
+                Cnt = IsEmpty("txtEmail", "lblEmail", Cnt);
+
+                if (Cnt == 0) {
+                    $("#btnChangeProfile").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                    $("#btnChangeProfile").prop("disabled", true);
+
+                    var jsonRequest = {
+                        "FullName": $("#txtFullName").val(),
+                        "UserName": $("#txtUserName").val(),
+                        "ContactNo": $("#txtContactNo").val(),
+                        "Email": $("#txtEmail").val(),
+                        "AlternateNo": $("#txtAlternateNo").val(),
+                        "Id": getCookie("AdminId")
+                    };
+
+                    var requestURL = "@Url.Content("~/api/UpdateAdmin")";
+
+                    $.ajax({
+                        url: requestURL,
+                        type: "post",
+                        contentType: "application/json",
+                        data: JSON.stringify(jsonRequest),
+                        success: function (response) {
+                            if (response.status == "OK") {
+                                setCookie("AdminFullName", $("#txtFullName").val(), 30);
+                                setCookie("AdminId", getCookie("AdminId"), 30);
+                                SuccessAlert("Profile Successfully Change");
+                                $("#ChangeProfile").modal("hide");
+                                $("#btnChangeProfile").html("Save");
+                                $("#btnChangeProfile").prop("disabled", false);
+                            }
+                            console.log(response.status);
+                        }
+                    });
+                }
+            });
+
+
+            $("#btnChangePass").click(function () {
+                var Cnt = 0;
+                Cnt = IsEmpty("txtOldPass", "lblOldPass", Cnt);
+                Cnt = IsEmpty("txtNewPass", "lblNewPass", Cnt);
+                Cnt = IsEmpty("txtConfirmPass", "lblConfirmPass", Cnt);
+
+                var New = $("#txtNewPass").val();
+                var Confirm = $("#txtConfirmPass").val();
+
+                if (New != "" && Confirm != "") {
+                    if (New == Confirm) {
+                        $("#lblConfirmPass").text("*");
+                    }
+                    else {
+                        Cnt++;
+                        $("#lblConfirmPass").text("*Password are not Match");
+                    }
+                }
+
+                if (Cnt == 0) {
+                    $("#btnChangePass").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp; Wait....");
+                    $("#btnChangePass").prop("disabled", true);
+
+                    const jsonRequest = JSON.stringify({
+                        "Password": $("#txtOldPass").val(),
+                        "newPassword": $("#txtNewPass").val(),
+                        "Id": getCookie("AdminId")
+                    });
+
+                    Path = "@Url.Content("~/api/ChangePassword")";
+
+                    $.ajax({
+                        url: Path,
+                        type: "POST",
+                        data: jsonRequest,
+                        contentType: "application/json"
+                    }).done(function (data) {
+                        console.log(data.status);
+
+                        if (data.status == "OK") {
+                            SuccessAlert('Password Successfully Change');
+                            $("#ChangePassword").modal("hide");
+                            $('#ChangePasswordForm')[0].reset();
+                        }
+                        else {
+                            $("#lblOldPass").text("Old Password is Incorrect");
+                            DangerAlert("Old Password is Incorrect");
+                        }
+                        $("#btnChangePass").html("Save");
+                        $("#btnChangePass").prop("disabled", false);
+                    });
+                }
+            });
+        });
+    </script>
+    
+    <script src="@Url.Content("~/admin_assets/vendor/libs/popper/popper.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/js/bootstrap.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/node-waves/node-waves.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/hammer/hammer.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/i18n/i18n.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/typeahead-js/typeahead.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/js/menu.js")"></script>
+
+    <!-- endbuild -->
+    <!-- Flat Picker -->
+    <script src="@Url.Content("~/admin_assets/vendor/libs/moment/moment.js")"></script>
+    <script src="@Url.Content("~/admin_assets/vendor/libs/flatpickr/flatpickr.js")"></script>
+
+    <!-- Main JS -->
+    <script src="@Url.Content("~/admin_assets/js/main.js")"></script>
+
+    <link rel="stylesheet" href="@Url.Content("~/toastr/toastr.min.css")">
+    <script src="@Url.Content("~/toastr/toastr.min.js")"></script>
+
+    <script>
+        function SuccessAlert(Message) {
+            toastr.success(Message);
+        }
+
+        function DangerAlert(Message) {
+            toastr.error(Message);
+        }
+    </script>
+</body>
+</html>

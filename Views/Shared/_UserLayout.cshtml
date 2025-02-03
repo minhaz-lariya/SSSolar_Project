@@ -1,0 +1,452 @@
+﻿
+@{
+	var link = string.IsNullOrEmpty(ViewBag.link) ? "sasolarexpertss.com" : ViewBag.Title;
+	var keywords = string.IsNullOrEmpty(ViewBag.keywords) ? "Solar wholesale company Johannesburg, Solar panel installations Johannesburg,High - quality solar products, Solar energy solutions South Africa, Solar batteries and inverters,Solar power systems Johannesburg, Affordable solar solutions, Renewable energy products South Africa, Solar power installation services, Solar accessories wholesale, Energy-saving solar solutions, Custom solar energy systems, Solar suppliers Johannesburg, Solar product distributor, Photovoltaic systems South Africa, Eco-friendly energy solutions, Residential and commercial solar systems, Professional solar installers South Africa, Off-grid solar systems, Sustainable energy products Johannesburg" : ViewBag.keywords;
+	var description = string.IsNullOrEmpty(ViewBag.description) ? "SA Solar Experts is a leading solar wholesale company located in Johannesburg at China Multiplex, offering high-quality solar products at competitive prices. We specialize in solar panel installations, solar batteries, inverters, and a full range of solar accessories. Our dedicated team of solar experts brings years of industry experience, allowing us to deliver tailored solutions that meet our clients' unique energy needs and help them reduce long-term energy costs." : ViewBag.description;
+	var seoImage = string.IsNullOrEmpty(ViewBag.seoImage) ? @Url.Content("~/sasalogo.png") : ViewBag.seoImage;
+}
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>@ViewBag.Title</title>
+	<meta name="title" property="og:title" content="@link">
+	<meta name="Keywords" content="@keywords">
+	<meta name="Description" content="@description">
+	<meta property="og:image" content="@seoImage">
+	<meta property="og:image:type" content="image/png">
+	<meta property="og:image:width" content="436">
+	<meta property="og:image:height" content="228">
+	<meta property="og:description" content="@description">
+	<link rel="icon" href="@Url.Content("~/favicon.ico")">
+	<script defer src="https://shown.io/metrics/VR0mmk5A0x" type="text/javascript"></script>
+	<link rel="apple-touch-icon" sizes="180x180" href="@Url.Content("~/apple-touch-icon.png")">
+	<link rel="icon" type="image/png" sizes="32x32" href="@Url.Content("~/favicon-32x32.png")">
+	<link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/favicon-16x16.png")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/bootstrap.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/bootstrap-icons.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/fontawesome.all.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/owl.carousel.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/owl.theme.default.min.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/nice-select.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/animate.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/magnific-popup.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/normalize.css")">
+	<link rel="stylesheet" href="@Url.Content("~/style.css")">
+	<link rel="stylesheet" href="@Url.Content("~/assets/css/responsive.css")">
+	<script src="@Url.Content("~/assets/js/jquery-3.5.1.min.js")"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/start/jquery-ui.css" />
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+	<script src="@Url.Content("~/Validation.js")"></script>
+	<script src="@Url.Content("~/Cookie.js")"></script>
+	<style>
+		input[type="text"], textarea {
+			text-transform: uppercase;
+		}
+
+		.one-line {
+			display: -webkit-box;
+			-webkit-line-clamp: 1;
+			-webkit-box-orient: vertical;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			font-size: 15px;
+		}
+
+		::-webkit-scrollbar {
+			width: 0.5em;
+			height: 0.5em
+		}
+
+		::-webkit-scrollbar-button {
+			background: #ccc
+		}
+
+		::-webkit-scrollbar-track-piece {
+			background: #888
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #eee
+		}
+
+		.autocomplete-item-table{
+			font-size: 12px;
+		}
+
+		/* Style for the loading overlay */
+		.loading-overlay {
+			display: none; /* Initially hidden */
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5); /* Transparent black background */
+			z-index: 1000; /* Ensure it appears above other elements */
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: white;
+			font-size: 24px;
+		}
+
+		.labelTextCutter {
+			height: initial;
+			width: 200px; /* Set the desired width for the container */
+			white-space: nowrap; /* Prevent text from wrapping */
+			overflow: hidden; /* Hide the overflowing text */
+			text-overflow: ellipsis; /* Add "..." when text overflows */
+			display: inline-block; /* Treat the element as an inline block */
+		}
+
+	</style>
+
+	<script>
+		$(document).ready(function(){
+
+				$("#search").autocomplete({
+					minLength: 0,
+					select: function (event, ui) {
+						var searchContent = ui.item.value.replaceAll("-", " ");
+						window.location.href = "@Url.Content("~/Search/")" + searchContent.replaceAll(" ", "-");
+					},
+					source: function (request, response) {
+						$.ajax({
+								url: '@Url.Content("~/api/filterProduct/")' + encodeURIComponent($("#search").val()),
+								type: "GET",
+								contentType: "application/json; charset=utf-8",
+								success: function (data) {
+										try 
+										{
+											const results = data.result;
+											response(results.map(function (item) {
+												return {
+													label: item.name,
+													value: item.name,
+													photo: item.productImage,
+													price: item.price
+												};
+											}));
+										} catch (error) {
+											console.error("Error parsing JSON:", error, data);
+										}
+								}
+						});
+					}
+				})
+				.data("ui-autocomplete")._renderItem = function (ul, item) {
+					return $("<li>").append(
+						   $("<div>").addClass("autocomplete-item-table").append(
+						   $("<table>").addClass("table table-borderless autocomplete-item-table").append($("<tr>").append($("<td>").css("width", "60px").append($("<img>").attr("src", '@Url.Content("~/Products/")' + item.photo).addClass("img-thumbnail")),
+						   $("<td>").text(item.label).css("width", "400px"),
+						   $("<td>").addClass("autocomplete-price").text(formatAsSouthAfricaRand(item.price)))))).appendTo(ul);
+				};
+		});
+	</script>
+</head>
+<body>
+	<!-- Preloader -->
+	<div id="preloader">
+		<div class="preloader">
+			<span></span>
+			<span></span>
+		</div>
+	</div>
+	<!-- Start Header Area -->
+	<header class="header">
+		<!-- Header Top -->
+		<div class="header-top">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-2 align-self-center">
+						<div class="logo d-mobile-none">
+							<a href="@Url.Content("~/")">
+								<img src="@Url.Content("~/sasalogo.png")" alt="logo">
+							</a>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="select-search-option" style="width: 100%; margin-top: 5px; display: flex; align-items: center;">
+							<input type="text" class="form-control" name="search" id="search" placeholder="Search Products..." style="flex: 1;">
+							<i class="fas fa-search" id="btnSearch" style="margin-left: -30px; cursor: pointer;"></i>
+						</div>
+
+					</div>
+					<div class="col-lg-4">
+						<div class="header-top-right">
+							<ul>
+								<li class="call">
+									<i class="bi bi-telephone-inbound"></i>
+									<span>+27 074 275 3464</span>
+								</li>
+								<li class="call">
+									<i class="bi bi-telephone-inbound"></i>
+									<span>+27 083 560 9269</span>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Header Bottom -->
+		<div class="header-bottom">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<!-- Logo -->
+						<div class="logo mobile-bar-logo">
+							<a href="@Url.Content("~/")">
+								<img style="width: 150px;margin-top: -5px;" src="@Url.Content("~/sasalogo.png")" alt="img">
+							</a>
+						</div>
+						<div class="mobile-bar">
+							<div class="canvas_open">
+								<a href="javascript:void(0)">
+									<span></span>
+									<span></span>
+									<span></span>
+								</a>
+							</div>
+						</div>
+						<div class="menu">
+							<nav>
+								<ul>
+									<li class="menu-item-has-children">
+										<a href="#">Inverters</a>
+										<ul id="productInverters"></ul>
+									</li>
+									<li class="menu-item-has-children">
+										<a href="#">Lithium Battery</a>
+										<ul id="productLithiumBattery"></ul>
+									</li>
+									<li class="menu-item-has-children">
+										<a href="#">Solar Panel</a>
+										<ul id="productSolarPanel"></ul>
+									</li>
+									<li><a href="@Url.Content("~/Special-Package")">Special Packages</a></li>
+									<li><a href="@Url.Content("~/Accessories")">Accessories</a></li>
+									<li><a href="@Url.Content("~/Repair")">Repairs</a></li>
+									<li><a href="@Url.Content("~/Terms-&-Conditon")">Terms & Condition</a></li>
+									<li><a href="@Url.Content("~/ContactUs")">Contact Us</a></li>
+								</ul>
+							</nav>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<script>
+		var Path = "@Url.Content("~/api/AllProducts")";
+		$.ajax({
+			url: Path,
+			type: "GET",
+			contentType: "application/json"
+		}).done(function (response) {
+			if (response.status == "OK") {
+				$("#productInverters").empty();
+				$("#productLithiumBattery").empty();
+				$("#productSolarPanel").empty();
+
+				// Sets to store unique brands for each category
+				var invertersSet = new Set();
+				var lithiumBatterySet = new Set();
+				var solarPanelSet = new Set();
+
+				var data = response.result;
+				data.forEach((o) => {
+					var brandLink = `<li><a href="@Url.Content("~/Products/")${o.category.replaceAll(" ", "-")}/${o.brand.replaceAll(" ", "-")}">${o.brand}</a></li>`;
+
+					switch (o.category) {
+						case "INVERTERS":
+							if (!invertersSet.has(o.brand)) {
+								invertersSet.add(o.brand);
+								$("#productInverters").append(brandLink);
+								$("#mobileProductInverters").append(brandLink);
+							}
+							break;
+						case "LITHIUM BATTERY":
+							if (!lithiumBatterySet.has(o.brand)) {
+								lithiumBatterySet.add(o.brand);
+								$("#productLithiumBattery").append(brandLink);
+								$("#mobileProductLithiumBattery").append(brandLink);
+							}
+							break;
+						case "SOLAR PANEL":
+							if (!solarPanelSet.has(o.brand)) {
+								solarPanelSet.add(o.brand);
+								$("#productSolarPanel").append(brandLink);
+								$("#mobileProductSolarPanel").append(brandLink);
+							}
+							break;
+					}
+				});
+			}
+		});
+
+	</script>
+
+
+	<!-- Start Mobile Menu Area -->
+	<div class="mobile-menu-area">
+		<!--offcanvas menu area start-->
+		<div class="off_canvars_overlay">
+		</div>
+		<div class="offcanvas_menu">
+			<div class="offcanvas_menu_wrapper">
+				<div class="canvas_close" style="margin-top: 22px;">
+					<a href="javascript:void(0)"><i class="fas fa-times"></i></a>
+				</div>
+				<div class="mobile-logo" style="text-align: left;margin-left: 10px;">
+					<a href="@Url.Content("~/")">
+						<img src="@Url.Content("~/sasalogo.png")" style="width: 80%;" alt="logo">
+					</a>
+				</div>
+				<div id="menu" class="text-left ">
+					<ul class="offcanvas_main_menu">
+						<li class="menu-item-has-children active">
+							<a href="#">Inverters</a>
+							<ul id="mobileProductInverters" class="sub-menu"></ul>
+						</li>
+						<li class="menu-item-has-children active">
+							<a href="#">Lithium Battery</a>
+							<ul id="mobileProductLithiumBattery" class="sub-menu"></ul>
+						</li>
+						<li class="menu-item-has-children active">
+							<a href="#">Solar Panel</a>
+							<ul id="mobileProductSolarPanel" class="sub-menu"></ul>
+						</li>
+						<li><a href="@Url.Content("~/Accessories")">Accessories</a></li>
+						<li class="menu-item-has-children"><a href="@Url.Content("~/Special-Package")">Special Packages</a></li>
+						<li class="menu-item-has-children"><a href="@Url.Content("~/AboutUs")">About Us</a></li>
+						<li class="menu-item-has-children"><a href="@Url.Content("~/Repair")">Repairs</a></li>
+						<li class="menu-item-has-children"><a href="@Url.Content("~/Terms-&-Conditon")">Terms & Condition</a></li>
+						<li class="menu-item-has-children"><a href="@Url.Content("~/ContactUs")">Contact Us</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--offcanvas menu area end-->
+	<!-- End Header Area -->
+	<div class="off_canvars_overlay">
+	</div>
+	
+	@RenderBody()
+	
+
+	<section class="call-now pt-120 pb-120 mt-5" style="background-image:url('@Url.Content("~/assets/img/call-bg.jpg")');">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12 text-center">
+					<div class="call-now-content">
+						<h4>Wholesale In Solar Panels, Batteries & <br />All Kinds Of Invertors Professional Installers Of PV (Solar) And Up Systems </h4>
+						<h2>+27742753464</h2>
+						<div class="cl-btn mt-20">
+							<a class="button-1" href="https://api.whatsapp.com/send?phone=27742753464">Contact us on Whatsapp</a>
+							<a class="button-3" href="@Url.Content("~/ContactUs")">Contact us</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="call-now-shap">
+			<img src="@Url.Content("~/assets/img/call.png")" alt="img">
+		</div>
+	</section>
+
+	<!-- Start Footer Area -->
+	<footer class="footer">
+		<div class="footer-top pt-70 pb-20">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-6 col-md-6 mb-30">
+						<div class="footer-widget-item">
+							<div class="f-logo mb-10">
+								<a href="@Url.Content("~/")">
+									<img style="width: 300px;" src="@Url.Content("~/sasalogo.png")" alt="logo">
+								</a>
+							</div>
+							<p style="text-align: justify;">SA Solar Experts is a solar wholesale company based in Johanessburg, China Multiplex that offers the best in quality solar products at an affordable price. We provide the best service possible to our clients, ensuring that their experience with us is seamless and stress-free. </p>
+							<div class="footer-social">
+								<span><a target="_blank" href="https://www.facebook.com/people/Sasolar-Boss/pfbid06Pus7YDqT9FNdtq2rzi8yrqzXNqAm6pPykhozs9DD5w8cMacLjJxP3yYb1Dyyjc2l/?ref=xav_ig_profile_web"><i class="fab fa-facebook-f"></i></a></span>
+								<span><a target="_blank" href="https://www.youtube.com/@@sasolarexperts"><i class="fab fa-youtube"></i></a></span>
+								<span><a target="_blank" href="https://www.instagram.com/sasolarexperts/?igsh=bGw5em9ha2wybnFz"><i class="fab fa-instagram"></i></a></span>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-1"></div>
+					<div class="col-lg-2 mb-30">
+						<div class="footer-widget-item" style="margin-top: 20px;">
+							<h2>Popular links</h2>
+							<ul>
+								<li><a href="@Url.Content("~/AboutUs")">About Us</a></li>
+								<li><a href="@Url.Content("~/Repair")">Repairs</a></li>
+								<li><a href="@Url.Content("~/Terms-&-Conditon")">Terms & Condition</a></li>
+								<li><a href="@Url.Content("~/ContactUs")">Contact Us</a></li>
+							</ul>
+						</div>
+					</div>
+					<!-- Single -->
+					<div class="col-lg-3 mb-30">
+						<div class="footer-widget-item" style="text-align: justify;margin-top: 20px;">
+							<h2>Contact Us</h2>
+							<p>
+								Shop no: 58, China Multiplex, <br />
+								160 Main Reef (Opp. Makro) <br />
+								Crown Mines,<br />
+								Johannesburg City. <br />
+								<i class="fas fa-phone"></i>&nbsp;+27 074 275 3464 <br />
+								<i class="fas fa-phone"></i>&nbsp;+27 083 560 9269
+							</p>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="footer-bottom pt-30 pb-30">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12 text-center">
+						<div class="copyright-text">
+							<p>Copyright ©<script>document.write(getFinancialYear());</script> All rights reserved <a href="#"><b>SA Solar</b></a></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<!-- End Footer Area -->
+	<div class="scroll-area">
+		<i class="fa fa-angle-up"></i>
+	</div>
+
+	<!-- Js File -->
+	<script src="@Url.Content("~/assets/js/modernizr.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/popper.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/bootstrap.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/owl.carousel.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/jquery.nice-select.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/jquery.magnific-popup.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/wow.min.js")"></script>
+	<script src="@Url.Content("~/assets/js/ajax-form.js")"></script>
+	<script src="@Url.Content("~/assets/js/mobile-menu.js")"></script>
+	<script src="@Url.Content("~/assets/js/script.js")"></script>
+
+	<script>
+		function confirmLogout() {
+			deleteCookie("UserContactNo");
+			deleteCookie("UserID");
+			deleteCookie("UserFullName");
+			window.location.href = "@Url.Content("~/")";
+		}
+	</script>
+</body>
+</html>

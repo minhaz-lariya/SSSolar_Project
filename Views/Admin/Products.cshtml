@@ -1,0 +1,442 @@
+﻿@{
+    ViewData["Title"] = "Products | SA SOLAR EXPERTS";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<input type="hidden" id="txtId" value="0" />
+<input type="hidden" id="txtFile" value="" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-5 mb-2">
+                        <select id="drpCategory" name="drpCategory" multiple="multiple" data-placeholder="Select Category" style="width: 100%;" class="form-control select2">
+                        </select>
+                    </div>
+                    <div class="col-md-5 mb-2">
+                        <select id="drpBrand" name="drpBrand" multiple="multiple" data-placeholder="Select Brand" style="width: 100%;" class="form-control select2">
+                        </select>
+                    </div>
+                    <div class="col-md-2 mb-2 text-right">
+                        <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#productModal"> New Product </button>
+                    </div>
+                    <div class="col-md-12 mb-2 table-responsive">
+                        <table border="1" id="datatable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Category</th>
+                                    <th>Brand</th>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Special Package</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="productModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-body ui-front">
+                <div class="row">
+                    <div class="col-md-6 mb-2">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <b>Category</b><label class="error" id="lblErrCategory"></label>
+                                <Select class="form-select" name="txtCategory" id="txtCategory">
+                            
+                                </Select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <b>Brand</b><label class="error" id="lblErrBrand"></label>
+                                <input type="text" class="form-control" name="txtBrand" id="txtBrand" value="" placeholder="Brand" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <b>Product</b><label class="error" id="lblErrproductName"></label>
+                                <input type="text" class="form-control" name="txtProductName" id="txtProductName" value="" placeholder="Product Name" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <b>Price</b><label class="error" id="lblErrPrice"></label>
+                                <input type="text" class="form-control" name="txtPrice" id="txtPrice" value="" placeholder="Product Price" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <b>Photo</b><label class="error" id="lblErrPhoto"></label>
+                                <input type="file" class="form-control" name="fupPhoto" id="fupPhoto" value="" placeholder="Product Price" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <b>Description</b><label class="error" id="lblErrDescription"></label>
+                                <textarea class="form-control" style="height: 180px" name="txtDescription" id="txtDescription" value="" placeholder="Product Description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <b>Keywords</b>
+                        <input type="text" class="form-control" name="txtKeywords" id="txtKeywords" value="" placeholder="SEO Keywords" />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <b>Brief Description</b>
+                        <input type="text" class="form-control" name="txtBrief" id="txtBrief" value="" placeholder="Brief Description" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-control">
+                            <input type="checkbox" id="chkSPStatus" /> &nbsp;Special Product
+                        </label>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-control">
+                            <input type="checkbox" id="chkStatus" /> &nbsp;Disclose Price
+                        </label>
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        <button type="button" class="btn btn-success" id="btnSave" name="btnSave">Save</button>
+                        <button type="reset" onclick="cancleForm()" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        populateCategory();
+
+        let base64String = null;
+        $("#btnSave").click(function () {
+            var ID = $("#txtId").val();
+            var Cnt = 0;
+            Cnt = IsEmpty("txtProductName", "lblErrproductName", Cnt);
+            Cnt = IsEmpty("txtPrice", "lblErrPrice", Cnt);
+            Cnt = IsEmpty("txtBrand", "lblErrBrand", Cnt);
+            Cnt = IsEmpty("txtDescription", "lblErrDescription", Cnt);
+
+            if (ID == 0) {
+                Cnt = FileValidtion("fupPhoto", "lblErrPhoto", Cnt);
+            }
+
+            if (Cnt == 0) {
+                $("#btnSave").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                $("#btnSave").prop("disabled", true);
+
+                var jsonRequest = {
+                    "Category": $("#txtCategory").val().toUpperCase(),
+                    "Brand": $("#txtBrand").val().toUpperCase(),
+                    "Name": $("#txtProductName").val().toUpperCase(),
+                    "Description": $("#txtDescription").val(),
+                    "SEOKeywords": $("#txtKeywords").val(),
+                    "BriefDescription": $("#txtBrief").val(),
+                    "Price": $("#txtPrice").val(),
+                    "ProductImage": (base64String != null ? base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "") : null),
+                    "Id": ID,
+                    "isSpecialProduct": $('#chkSPStatus').is(':checked') ? "Yes" : "No",
+                    "isShowPrice": $('#chkStatus').is(':checked') ? "true" : "false"
+                };
+
+                var requestURL = "@Url.Content("~/api/AddProducts")";
+
+                if (ID != 0) {
+                    requestURL = "@Url.Content("~/api/UpdateProducts")";
+                }
+
+                $.ajax({
+                    url: requestURL,
+                    type: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(jsonRequest),
+                    success: function (response) {
+                        if (response.status == "OK") {
+                            dataTable.ajax.reload(null, false);
+                            $("#productModal").modal("hide");
+                            $("#btnSave").html("Save");
+                            $("#btnSave").prop("disabled", false);
+                            cancleForm();
+                        }
+                        console.log(response.status);
+                    }
+                });
+            }
+        });
+
+        $("#fupPhoto").change(function () {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    base64String = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+
+        $("#drpCategory").change(function () {
+            var category = $("#drpCategory").val();
+
+            // Initialize brandSet outside the if block to ensure it's available in both cases
+            var brandSet = new Set();
+
+            // Apply category filter on DataTable
+            if (category != "") {
+                dataTable.column(1).search(String(category).replaceAll(",", "|"), true, false).draw();
+            } else {
+                // Clear category filter and reset brandSet
+                dataTable.columns(1).search('', true, false).draw();
+            }
+
+            // Disable pagination to show all rows
+            dataTable.page.len(-1).draw();
+
+            // Extract unique brands based on visible rows
+            var rows = dataTable.rows({ search: 'applied' }).nodes();  // Get only the filtered rows
+            for (var i = 0; i < rows.length; i++) {
+                var $row = $(rows[i]);
+                if ($row.is(":visible")) {
+                    var brandvalue = $row.find("td:eq(2)").html(); // Get brand value from 3rd column
+                    brandSet.add(brandvalue); // Add brand to the set
+                }
+            }
+
+            // Clear existing options in drpBrand and append unique brands to the dropdown
+            $("#drpBrand").empty();
+            brandSet.forEach(function (brand) {
+                if (brand) {
+                    $("#drpBrand").append("<option value='" + brand + "'>" + brand + "</option>");
+                }
+            });
+
+            // Reinitialize Select2 and trigger change
+            $("#drpBrand").select2();
+            $("#drpBrand").trigger('change');
+
+            // Re-enable pagination (if needed) after populating the brand dropdown
+            dataTable.page.len(10).draw();  // You can keep this or change to your preferred page length
+        });
+
+
+
+        $("#drpBrand").change(function () {
+            var brand = $("#drpBrand").val();
+            if (brand != "") 
+            {
+                dataTable.column(2).search(String(brand).replaceAll(",", "|"), true, false).draw();
+            }
+            else 
+            {
+                dataTable.columns(2).search('', true, false).draw();
+            }
+        });
+    });
+
+    function cancleForm() {
+        $("#txtId").val("0");
+        $("#txtProductName").val("");
+        $("#txtBrand").val("");
+        $("#txtPrice").val("");
+        $("#txtDescription").val("");
+        $("#txtKeywords").val("");
+        $("#txtBrief").val("");
+        $("#chkStatus").prop("checked", false);
+        $("#btnSave").html("Save");
+    }
+
+    function getProductMastersEdit(Id) {
+        const $loadingOverlay = $(`<div class="loading-overlay"><i class='fas fa-spinner fa-pulse'></i>&nbsp;Loading...</div>`).appendTo('body');
+        $loadingOverlay.show();
+        $.get("@Url.Content("~/api/")detailProducts/" + Id)
+            .done(function (data, status) {
+                if (data.status == "OK") {
+                    var Element = data.result;
+                    $("#txtId").val(Id);
+                    $("#txtProductName").val(Element.name);
+                    $("#txtCategory").val(Element.category);
+                    $("#txtBrand").val(Element.brand);
+                    $("#txtPrice").val(Element.price);
+                    $("#txtDescription").val(Element.description);
+                    $("#txtKeywords").val(Element.seoKeywords);
+                    $("#txtBrief").val(Element.briefDescription);
+                    if (Element.isShowPrice == "true") {
+                        $("#chkStatus").prop("checked", true);
+                    }
+
+                    if (Element.isSpecialProduct == "Yes") {
+                        $("#chkSPStatus").prop("checked", true);
+                    }
+
+                    
+                    $("#btnSave").html("Update data");
+                    $loadingOverlay.remove();
+                    $("#productModal").modal("show");
+                }
+                else {
+                    $loadingOverlay.remove();
+                    alert("Something Went Wrong");
+                }
+            })
+            .fail(function () {
+                $loadingOverlay.remove();
+                alert("Error");
+            });
+    }
+    function DeleteData(Id, o) {
+        if (confirm("Are You Sure Want to Delete this Record..!!")) {
+            var currentRow = o.parentNode.parentNode.rowIndex;
+            $("#datatable tr").eq(currentRow).addClass("selected");
+
+            var Path = "@Url.Content("~/api/")deleteProducts/" + Id;
+
+            $.ajax({
+                url: Path,
+                type: "delete",
+                processData: false,  // tell jQuery not to process the data
+                contentType: false   // tell jQuery not to set contentType
+            }).done(function (data) {
+                console.log(data);
+
+                if (data.status == "OK") {
+                    dataTable.ajax.reload(null, false);
+                }
+            });
+        }
+    }
+
+    function populateCategory() {
+        $.get("@Url.Content("~/api/Categories")")
+            .done(function (data, status) {
+                if (data.status == "OK") {
+                    var jsonData = data.result;
+                    $("#txtCategory").empty();
+                   jsonData.map((o, index) => {
+                       $("#txtCategory").append(`<option value="${o.name}">${o.name}</option>`);
+                   });
+                }
+                else {
+                    alert("Something Went Wrong");
+                }
+            })
+            .fail(function () {
+                alert("Error");
+            });
+    }
+   
+    var uniqueBrands = [];
+    var uniqueProducts = [];
+    var uniqueCategories = [];
+
+    var dataTable = $("#datatable").DataTable({
+        "ajax": {
+            "url": "@Url.Content("~/api/AllProducts")",
+            "dataSrc": "result"
+        },
+        "aoColumns": [
+            { mData: 'productImage' },
+            { mData: 'category' },
+            { mData: 'brand' },
+            { mData: 'name' },
+            { mData: 'price' },
+            { mData: 'isSpecialProduct' },
+            { mData: 'id' },
+            { mData: 'id' }
+        ],
+        "paginate": true,
+        "retrieve": true,
+        "responsive": false,
+        "destroy": true,
+        "autoWidth": false,
+        'columnDefs': [
+            {
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return '<img style="height: 50px; width: 50px;" src="@Url.Content("~/Products/")' + data + '" />';
+                }
+            },
+            {
+                'targets': 5,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return (data == "Yes" ? `<span class="badge bg-success">Yes</span>` : `<span class="badge bg-danger">No</span>`);
+                }
+            },
+            {
+                'targets': 6,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    var Edit = "getProductMastersEdit('" + data + "')";
+                    return '<i class="fas fa-edit text-primary" style="font-size: 25px;" data-toggle="modal" data-target="#ProductMaster" onclick="' + Edit + '" ></i>';
+                }
+            },
+            {
+                'targets': 7,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+                'render': function (data, type, full, meta) {
+                    var Delete = "DeleteData('" + data + "', this)";
+                    return '<i class="fas fa-trash text-primary" style="font-size: 25px;" onclick="' + Delete + '" ></i>';
+                }
+            }
+        ],
+        "initComplete": function (settings, json) {
+            json.result.forEach(function (item) {
+                if (!uniqueBrands.includes(item.brand)) {
+                    uniqueBrands.push(item.brand);
+                }
+
+                if (!uniqueProducts.includes(item.name)) {
+                    uniqueProducts.push(item.name);
+                }
+
+                if (!uniqueCategories.includes(item.category)) {
+                    uniqueCategories.push(item.category);
+                }
+            });
+
+
+            $("#txtBrand").autocomplete({
+                source: uniqueBrands
+            });
+
+            $("#txtProductName").autocomplete({
+                source: uniqueProducts
+            });
+
+            var $categorySelect = $('#drpCategory');
+            uniqueCategories.forEach(function (item) {
+                $categorySelect.append(new Option(item, item));
+            });
+            $categorySelect.select2();
+
+            var $brandSelect = $('#drpBrand');
+            uniqueBrands.forEach(function (item) {
+                $brandSelect.append(new Option(item, item));
+            });
+            $brandSelect.select2();
+
+            console.log("Unique Brands:", uniqueBrands);
+            console.log("Unique Products:", uniqueProducts);
+        }
+    });
+
+
+
+
+</script>

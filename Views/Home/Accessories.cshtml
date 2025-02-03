@@ -1,0 +1,274 @@
+﻿
+@{
+    ViewData["Title"] = "Accessories";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<style>
+		/* Default styles for larger screens */
+	.product-content h4 {
+		font-size: 16px; /* Or any default font size */
+	}
+
+	/* Media query for mobile devices */
+	@@media (max-width: 768px) {
+		.product-content h4 {
+			font-size: 10px; /* Set font size to 10px for mobile */
+		}
+	}
+</style>
+
+<script>
+	let filterProduct = [];
+	let Product = [];
+</script>
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Accessories</a></li>
+		</ol>
+	</nav>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="widgets-single mb-30">
+					<h2 style="margin-bottom: 2px;">Category</h2>
+					<ul id="categoryFilter">
+					</ul>
+				</div>
+				<div class="widgets-single mb-30">
+					<h2 style="margin-bottom: 2px;">Brand</h2>
+					<ul id="brandFilter">
+					</ul>
+				</div>
+			</div>
+			<div class="col-lg-9">
+				<!-- Products -->
+				<div class="row">
+					<div class="tab-content" id="myTabContent">
+						<!-- Shop GridView -->
+						<div class="tab-pane fade shop-gridview active show" id="gridView" role="tabpanel" aria-labelledby="gridView-tab">
+							<div class="row" id="products">
+								<!-- Single -->
+
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	function adjustFontSize() {
+		if ($(window).width() <= 768) {
+			var fontSize = '8px';
+			$('.product-content').css('padding', "0px");
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "150px");
+			$('.pricing span').css('font-size', '15px');
+			$('.product-overly-btn ul li').css('font-size', '10px');
+
+		}
+		else {
+			var fontSize = '16px';
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "250");
+			$('.pricing span').css('font-size', '20px');
+			$('.product-overly-btn ul li').css('font-size', '15px');
+			$('.product-content').css('padding', "initial");
+		}
+	}
+
+	$(document).ready(function () {
+
+		$(window).resize(function () {
+			adjustFontSize();
+		});
+
+		const $loadingOverlay = $('<div class="loading-overlay">Loading...</div>').appendTo('body');
+		$loadingOverlay.show();
+		// Fetch products and display as usual
+		$.get("@Url.Content("~/api/AllProductsAccessories/")")
+			.done(function (data, status) {
+				console.log(data);
+				if (data.status == "OK") {
+					var data = data.result;
+
+					const arrCategory = [...new Set(data.map(item => item.category))];
+					const arrBrand = [...new Set(data.map(item => item.brand))];
+
+					console.log("Unique Categories:", arrCategory);
+					console.log("Unique Brands:", arrBrand);
+
+					arrCategory.map((o, index) => {
+						$("#categoryFilter").append(`<li><label><input data-group="Category" type='checkbox' value='${o}' />&nbsp;${o}</label></li>`);
+					});
+
+					arrBrand.map((o, index) => {
+						$("#brandFilter").append(`<li><label><input data-group="Brand" type='checkbox' value='${o}' />&nbsp;${o}</label></li>`);
+					});
+
+					Product = data;
+
+					data.map((o, index) => {
+
+						var link = "https://api.whatsapp.com/send?phone=27742753464&text=" + encodeURIComponent(`Hello, I would like more information about ${o.category} category of product ${o.brand} ${o.name}`);
+
+						var productImageUrl = "@Url.Content("~/Products/")" + o.productImage;
+						var QuickLink = "@Url.Content("~/Products/Details/")" + o.id + "/" + o.name.replaceAll(" ", "-");
+
+						$("#products").append(`
+						<div class="col-md-3 col-6 mb-30 d-flex">
+							<div class="product-item">
+								<div class="product-thumbnail">
+									<img style="width: 100%; height: 250px;" src="${productImageUrl}" alt="product">
+									<div class="product-overly-btn">
+										<ul>
+											<li><a target="_blank" href="${link}"><i class="fas fa-comment"></i><span>Inquiry on Whatsapp</span></a></li>
+											<li><a href="${QuickLink}"><i class="far fa-eye"></i><span>Quick view</span></a></li>
+										</ul>
+									</div>
+								</div>
+								<div class="product-content">
+									<strong>${o.name}</strong>
+									<div class="pricing">
+										<span>${formatAsSouthAfricaRand(o.price)}</span>
+									</div>
+								</div>
+							</div>
+						</div>`);
+					adjustFontSize();
+					});
+				} else {
+					alert("Something Went Wrong");
+				}
+				$loadingOverlay.remove();
+			})
+			.fail(function () {
+				alert("Error");
+				$loadingOverlay.remove();
+			});
+
+	});
+
+
+	function populateProducts(){
+		$("#products").empty();
+		filterProduct.map((o, index) => {
+			var link = "https://api.whatsapp.com/send?phone=27742753464&text=" + encodeURIComponent(`Hello, I would like more information about ${o.category} category of product ${o.brand} ${o.name}`);
+			var productImageUrl = "@Url.Content("~/Products/")" + o.productImage;
+			var QuickLink = "@Url.Content("~/Products/Details/")" + o.id + "/" + o.name.replaceAll(" ", "-");
+			$("#products").append(`
+							<div class="col-md-3 col-6 mb-30 d-flex">
+								<div class="product-item">
+									<div class="product-thumbnail">
+										<img style="width: 100%; height: 250px;" src="${productImageUrl}" alt="product">
+										<div class="product-overly-btn">
+											<ul>
+												<li><a target="_blank" href="${link}"><i class="fas fa-comment"></i><span>Inquiry on Whatsapp</span></a></li>
+												<li><a href="${QuickLink}"><i class="far fa-eye"></i><span>Quick view</span></a></li>
+											</ul>
+										</div>
+									</div>
+									<div class="product-content">
+										<strong>${o.name}</strong>
+										<div class="pricing">
+											<span>${formatAsSouthAfricaRand(o.price)}</span>
+										</div>
+									</div>
+								</div>
+							</div>`);
+			
+		});
+		adjustFontSize();
+	}
+
+</script>
+
+<script>
+	let chkCategoryArr = [];
+	let chkBrandArr = [];
+	$(document).on("change", "#categoryFilter input[type='checkbox'], #brandFilter input[type='checkbox']", function () {
+		const currentGroup = $(this).data('group');
+		
+		chkCategoryArr = [];
+		$("#categoryFilter input[type='checkbox']:checked").each(function () {
+			chkCategoryArr.push($(this).val());
+		});
+
+		filterProduct = [];
+		if (chkCategoryArr.length > 0) {
+			filterProduct = Product.filter(product => chkCategoryArr.includes(product.category));
+
+			if (currentGroup == "Category") { 
+				$("#brandFilter").empty();
+				const arrBrand = [...new Set(filterProduct.map(item => item.brand))];
+				arrBrand.map((o) => {
+					$("#brandFilter").append(`<li><label><input data-group="Brand" type='checkbox' value='${o}' />&nbsp;${o}</label></li>`);
+				});
+			}
+		} 
+		else 
+		{
+			filterProduct = Product;
+			
+			if (currentGroup == "Category"){
+				
+				$("#brandFilter").empty();
+				const arrBrand = [...new Set(filterProduct.map(item => item.brand))];
+				arrBrand.map((o) => {
+					$("#brandFilter").append(`<li><label><input data-group="Brand" type='checkbox' value='${o}' />&nbsp;${o}</label></li>`);
+				});
+			}
+		}
+		
+		chkBrandArr = [];
+		$("#brandFilter input[type='checkbox']:checked").each(function () {
+			chkBrandArr.push($(this).val());
+		});
+
+		if (chkBrandArr.length > 0){
+			filterProduct = Product.filter(product => chkBrandArr.includes(product.brand));
+		}
+
+		console.log("Selected Brands:", chkBrandArr);
+		populateProducts();
+	});
+</script>
+
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModal" aria-hidden="true">
+	<div class="modal-dialog quick-view-modal">
+		<div class="modal-content quick-view-modal-content">
+			<div class="row">
+				<div class="col-md-12 mb-2 text-right">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="col-lg-6 col-md-6">
+					<img id="imgProduct" style="width: 100%; height: 300px;" alt="img">
+				</div>
+				<div class="col-lg-6 col-md-6">
+					<div class="quickview-modal-content-full">
+						<h3 style="font-size: 15px;" id="lblProductName"></h3>
+						<div class="cate">
+							<span><strong>Categories:</strong></span>
+							<span id="lblcategory"></span>
+						</div>
+						<div class="pricing" style="margin-top: -20px;"></div>
+						<p style="text-align:justify;font-size:15px;line-height:1.2;height:200px; overflow: scroll;overflow-x: hidden; padding-right: 10px;" id="productDescription"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

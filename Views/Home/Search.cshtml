@@ -1,0 +1,97 @@
+﻿
+@{
+    ViewData["Title"] = "Search";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Search /&nbsp;</a></li>
+			<li><a id="link_prev" class="text-white labelTextCutter">@ViewBag.Name</a></li>
+		</ol>
+	</nav>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row" style="display: none;" id="EmptyContent">
+			<div class="col-md-12">
+				<div class="card">
+					<div class="card-body text-center">
+						<h1>No Product Found</h1>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row" style="display: none;" id="ProductContent">
+			<div class="col-lg-5 mb-2">
+				<div class="card">
+					<div class="card-body">
+						<img style="height: 400px; width: 100%;" id="imgProduct" />
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-7 mb-2">
+				<div class="card">
+					<div class="card-body">
+						<table class="table table-bordered">
+							<tr>
+								<th>Category</th>
+								<td><span id="lblcategory"></span></td>
+							</tr>
+							<tr>
+								<th>Brand</th>
+								<td><span id="lblBrand"></span></td>
+							</tr>
+							<tr>
+								<th>Name</th>
+								<td><span id="lblProductName"></span></td>
+							</tr>
+							<tr>
+								<th>Price</th>
+								<td><span id="lblPrice"></span></td>
+							</tr>
+							<tr>
+								<th>Description</th>
+								<td><span style="font-size: 12px;" id="productDescription"></span></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+	$(document).ready(function () {
+		$("#preloader").show();
+		$.get("@Url.Content("~/api/")SearchProduct/@ViewBag.Name")
+		.done(function (data, status) {
+			console.log(data);
+			if (data.status == "OK") {
+				var Element = data.result;
+				$("#imgProduct").prop("src", "@Url.Content("~/Products/")" + Element.productImage);
+				$("#lblProductName").html(Element.brand + " " + Element.name);
+				$("#lblPrice").html(formatAsSouthAfricaRand(Element.price));
+				$("#productDescription").html(Element.description);
+				$("#lblBrand").html(Element.brand);
+				$("#lblcategory").html(Element.category);
+				$("#EmptyContent").hide();
+				$("#preloader").hide();
+				$("#ProductContent").show();
+			}
+			else {
+				$("#ProductContent").hide();
+				$("#EmptyContent").show();
+			}
+		})
+		.fail(function () {
+			alert("Error");
+		});
+	});
+</script>
+
+

@@ -1,0 +1,161 @@
+﻿
+@{
+    ViewData["Title"] = "Special Package | SA Solar";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Special Packages</a></li>
+		</ol>
+	</nav>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<!-- Products -->
+				<div class="row">
+					<div class="tab-content" id="myTabContent">
+						<div class="tab-pane fade shop-gridview active show" id="gridView" role="tabpanel" aria-labelledby="gridView-tab">
+							<div class="row" id="products">
+								
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+
+	function getProductMastersEdit(Id) {
+		$.get("@Url.Content("~/api/")detailPackages/" + Id)
+		.done(function (data, status) {
+			if (data.status == "OK") {
+				var Element = data.result;
+				$("#imgProduct").prop("src", "@Url.Content("~/SpecialPackages/")" + Element.imgPath);
+				$("#lblProductName").html(Element.title);
+				$(".pricing").html(`<span>${formatAsSouthAfricaRand(Element.price)}</span>`);
+				$("#productDescription").html(Element.description);
+				$("#quickViewModal").modal("show");
+			}
+			else {
+				alert("Something Went Wrong");
+			}
+		})
+		.fail(function () {
+			alert("Error");
+		});
+	}
+
+	function adjustFontSize() {
+		if ($(window).width() <= 768) {
+			var fontSize = '8px';
+			$('.product-content').css('padding', "0px");
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "150px");
+			$('.pricing span').css('font-size', '15px');
+			$('.product-overly-btn ul li').css('font-size', '10px');
+
+		}
+		else {
+			var fontSize = '16px';
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "250");
+			$('.pricing span').css('font-size', '20px');
+			$('.product-overly-btn ul li').css('font-size', '15px');
+			$('.product-content').css('padding', "initial");
+		}
+	}
+
+	
+
+
+	$(document).ready(function(){
+
+		$(window).resize(function () {
+			adjustFontSize();
+		});
+
+		$.get("@Url.Content("~/api/showPackages")")
+		.done(function (data, status) {
+			console.log(data);
+			if (data.status == "OK") {
+				var data = data.result;
+
+				data.map((o, index) => {
+
+					var link = "https://api.whatsapp.com/send?phone=27742753464&text=" + encodeURIComponent(`Hello, I would like more information about Special Package of ${o.title}`);
+
+					var imgPath = `@Url.Content("~/SpecialPackages/")${o.imgPath}`;
+
+					$("#products").append(`<div class="col-lg-3 col-6 mb-30 d-flex">
+										<div class="product-item">
+											<div class="product-thumbnail">
+												<img style="width: 100%;height: 250px;" src="${imgPath}" alt="product">
+												<div class="product-overly-btn">
+													<ul>
+														<li><a target="_blank" href="${link}"><i class="fas fa-comment"></i><span>Inquiry on Whatsapp</span></a></li>
+														<li><a onClick="getProductMastersEdit(${o.id})" href="#"><i class="far fa-eye"></i><span>Quick view</span></a></li>
+													</ul>
+												</div>
+											</div>
+											<div class="product-content">
+												<strong>${o.title}</strong>
+												<div class="pricing">
+													<span>${formatAsSouthAfricaRand(o.price)}</span>
+												</div>
+												<div class="product-content">
+													<strong>Package till ${setData(o.dateTo)}</strong>
+												</div>
+											</div>
+										</div>
+									</div>`);
+				});
+			}
+			else
+			{
+				$("#products").append(`<div class="col-lg-12 mb-30 text-center"><img style="width: 100px;" src="@Url.Content("~/Photos/emptyData.png")" /><h1 class="text-danger">No Special Packages Available Right Now</h1></div>`);
+			}
+		})
+		.fail(function () {
+			alert("Error");
+		});
+	});
+</script>
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModal" aria-hidden="true">
+	<div class="modal-dialog quick-view-modal">
+		<div class="modal-content quick-view-modal-content">
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			<div class="row">
+				<div class="col-lg-6 col-md-6">
+					<div class="modal_tab">
+						<div class="tab-content product-details-large">
+							<div class="tab-pane fade show active" id="tab1" role="tabpanel">
+								<div class="modal_tab_img">
+									<a href="#"><img id="imgProduct" style="width: 100%; height: 400px;" src="assets/img/product/1.jpg" alt="img"></a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6">
+					<div class="quickview-modal-content-full">
+						<h3 id="lblProductName"></h3>
+						<div class="pricing" style="margin-top: -20px;"></div>
+						<p style="text-align:justify;font-size:15px;line-height:1.2;height:200px; overflow: scroll;overflow-x: hidden; padding-right: 10px;" id="productDescription"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

@@ -1,0 +1,108 @@
+﻿
+@{
+    ViewData["Title"] = "Repair | SA Solar";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Repairs</a></li>
+		</ol>
+	</nav>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 mb-2">
+				<div class="card">
+					<div class="card-body">
+
+						<div class="row d-flex align-items-stretch">
+							<div class="col-md-12 mt-2">
+								<h4>Check In Product for Private Repair</h4>
+								<hr style="margin-top: 1px;" />
+							</div>
+							<div class="col-md-3 mb-2 d-flex align-items-stretch" style="vertical-align: middle;">
+								<div class="card h-100 w-100 text-center">
+									<img src="@Url.Content("~/Photos/Repair_Company.jpg")" style="width: 100%;height: 100%;" />
+								</div>
+							</div>
+							<div class="col-md-9 mb-2 d-flex align-items-stretch">
+								<div class="card h-100 w-100">
+									<div class="card-body">
+										<h4 style="font-size: 20px;">In order to book your product for repair, we require the following:</h4>
+										<hr style="margin-top: 1px;" />
+										<div class="invoice-terms">
+											<ul>
+												<li>Invoice showing that the product has been purchased by SA Solar Experts.</li>
+												<li>Repair may take approximately 1 to 7 days.</li>
+												<li>When you come to collect your repaired items, you must come with the repair slip/invoice. Without the repair slip, you will not be able to collect the stock.</li>
+												<li>Before leaving our shop, make sure to test any repair items you collect.</li>
+												<li>Visiting our shop for repairs necessitates obtaining a repair slip from our worker.</li>
+												<li>When paying for repairs, you must pay at the cash counter.</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-12 mt-5">
+								<h4>Check In Product for Company Repair</h4>
+								<hr style="margin-top: 1px;" />
+							</div>
+							<div class="col-md-3 mb-2 d-flex align-items-stretch" style="vertical-align: middle;">
+								<div class="card h-100 w-100 text-center">
+									<img src="@Url.Content("~/Photos/Repair_Private.png")" style="width: 100%;" />
+								</div>
+							</div>
+							<div class="col-md-9 mb-2 d-flex align-items-stretch">
+								<div class="card h-100 w-100">
+									<div class="card-body">
+										<h4 style="font-size: 20px;">In order to book your product for repair, we require the following:</h4>
+										<hr style="margin-top: 1px;" />
+										<div class="invoice-terms">
+											<ul>
+												<li>Invoice showing that the product has been purchased by SA Solar Experts.</li>
+												<li>For any repair from day one, we have to book your repairs with the company.</li>
+												<li>Warranty is only for repairs. Repairs may take approximately 7 to 21 days.</li>
+												<li>Before leaving our premises, ensure that the battery and inverter are tested.</li>
+												<li>No warranty for water damage, broken products, or products without a barcode.</li>
+												<li>When you come to collect your repaired items, you must bring the repair slip or invoice. Without the repair slip, you will not be able to collect the stock.</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+</section>
+
+<style>
+	.invoice-terms ul {
+		list-style-type: disc; /* Sets bullet style */
+		padding-left: 20px; /* Adds padding to left for bullets */
+		margin: 0;
+		color: #333; /* Text color */
+		font-size: 16px; /* Font size */
+		line-height: 1.6; /* Spacing between lines */
+		font-family: Arial, sans-serif; /* Font family */
+	}
+
+	.invoice-terms li {
+		margin-bottom: 10px; /* Adds spacing between list items */
+	}
+
+	.invoice-terms li::marker {
+		color: #007bff; /* Custom color for bullet points */
+	}
+
+</style>
+
+

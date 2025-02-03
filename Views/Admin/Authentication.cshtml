@@ -1,0 +1,134 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication | SA SOLAR EXPERTS</title>
+    @{
+        var link = string.IsNullOrEmpty(ViewBag.link) ? "sasolarexpertss.com" : ViewBag.Title;
+        var keywords = string.IsNullOrEmpty(ViewBag.keywords) ? "Solar wholesale company Johannesburg, Solar panel installations Johannesburg,High - quality solar products, Solar energy solutions South Africa, Solar batteries and inverters,Solar power systems Johannesburg, Affordable solar solutions, Renewable energy products South Africa, Solar power installation services, Solar accessories wholesale, Energy-saving solar solutions, Custom solar energy systems, Solar suppliers Johannesburg, Solar product distributor, Photovoltaic systems South Africa, Eco-friendly energy solutions, Residential and commercial solar systems, Professional solar installers South Africa, Off-grid solar systems, Sustainable energy products Johannesburg" : ViewBag.keywords;
+        var description = string.IsNullOrEmpty(ViewBag.description) ? "SA Solar Experts is a leading solar wholesale company located in Johannesburg at China Multiplex, offering high-quality solar products at competitive prices. We specialize in solar panel installations, solar batteries, inverters, and a full range of solar accessories. Our dedicated team of solar experts brings years of industry experience, allowing us to deliver tailored solutions that meet our clients' unique energy needs and help them reduce long-term energy costs." : ViewBag.description;
+        var seoImage = string.IsNullOrEmpty(ViewBag.seoImage) ? @Url.Content("~/sasalogo.png") : ViewBag.seoImage;
+    }
+
+    <meta name="title" property="og:title" content="@link">
+    <meta name="Keywords" content="@keywords">
+    <meta name="Description" content="@description">
+    <meta property="og:image" content="@seoImage">
+    <link rel="icon" href="@Url.Content("~/favicon.ico")">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="@Url.Content("~/admin_assets/vendor/libs/jquery/jquery.js")"></script>
+    <script src="@Url.Content("~/Validation.js")"></script>
+    <script src="@Url.Content("~/Cookie.js")"></script>
+    <style>
+        .error {
+            color: red
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            background-color: #f7f7f7;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2 class="text-center mb-4"><img style="width: 100%;" src="@Url.Content("~/sasalogo.png")" /></h2>
+        <form>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <label class="error" id="lblUser"></label>
+                <input type="text" class="form-control" id="txtUser" placeholder="Enter your username" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <label class="error" id="lblPasswd"></label>
+                <input type="password" class="form-control" id="txtPasswd" placeholder="Enter your password" required>
+            </div>
+            <div class="d-grid">
+                <button type="button" id="btnSignIn" class="btn btn-primary">Sign-In</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="@Url.Content("~/toastr/toastr.min.css")">
+	<script src="@Url.Content("~/toastr/toastr.min.js")"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#btnSignIn").click(function(){
+
+                var Cnt = 0;
+                Cnt = IsEmpty("txtUser", "lblUser", Cnt);
+                Cnt = IsEmpty("txtPasswd", "lblPasswd", Cnt);
+
+                if (Cnt == 0){
+                    $("#btnSignIn").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                    $("#btnSignIn").prop("disabled", true);
+                    var jsonRequest = {
+                        "userName": $("#txtUser").val(),
+                        "password": $("#txtPasswd").val()
+                    };
+
+                    $.ajax({
+                        url: "@Url.Content("~/api/Authentication")",
+                        type: "post",
+                        contentType: "application/json",
+                        data: JSON.stringify(jsonRequest),
+                        success: function(response){
+                            if (response.status == "Ok"){
+                                var element = response.result;
+                                setCookie("AdminId", element.id, 30);
+                                setCookie("AdminFullName", element.fullName, 30);
+                                SuccessAlert("Welcome to SA Solar");
+                                setTimeout(()=> {
+                                    window.location.href = "@Url.Content("~/Admin/Home")";
+                                }, 1000);
+                            }
+                            else{
+                                DangerAlert(response.result);
+                            }
+
+                            $("#btnSignIn").html("Sign-In");
+                            $("#btnSignIn").prop("disabled", false);
+                        }
+                    });
+                }
+            });
+        });
+
+
+        function SuccessAlert(Message) {
+            toastr.success(Message);
+        }
+
+        function DangerAlert(Message) {
+            toastr.error(Message);
+        }
+
+    </script>
+
+</body>
+</html>

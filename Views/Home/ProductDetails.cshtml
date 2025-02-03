@@ -1,0 +1,203 @@
+﻿
+@Model
+@{
+	var product = ViewBag.ProductData as Products;
+    ViewData["Title"] = product.Brand + " " + product.Name;
+	ViewData["keywords"] = product.SEOKeywords;
+	ViewData["description"] = product.BriefDescription;
+	ViewData["seoImage"] = @Url.Content("~/Products/") + product.ProductImage;
+	ViewData["link"] = "https://sasolarexpertss.com/Products/Details/" + product.Id + "/" + product.Name;
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<script>
+	$(document).ready(function(){
+		const previousPage = document.referrer;
+		const currentPage = window.location.href;
+
+		if (previousPage !== "" && currentPage !== previousPage) {
+			setCookie("PreviousPage", previousPage, 30); // Save to cookie for 30 days
+			$("#link_prev").prop("href", previousPage); // Set the href to the referrer
+		}
+		else {
+			const cookiePage = getCookie("PreviousPage");
+			if (cookiePage) {
+				$("#link_prev").prop("href", cookiePage); // Use the stored cookie value
+			} else {
+				$("#link_prev").prop("href", "#"); // Fallback if no referrer or cookie exists
+			}
+		}
+	});
+</script>
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Products</a> /&nbsp;</li>
+			<li aria-current="page" class="labelTextCutter">@product.Brand @product.Name</li>
+		</ol>
+	</nav>
+</div>
+
+<script>
+	// Your URL to share
+	const myLink = "https://sasolarexpertss.com/Products/Details/@product.Id/@product.Name";
+	const title = "Check out this @product.Brand @product.Name";
+
+	// WhatsApp
+	function shareOnWhatsApp() {
+		const text = `Check this out: ${myLink}`;
+		const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+		window.open(url, "_blank");
+	}
+
+	// Telegram
+	function shareOnTelegram() {
+		const text = `Check this out: ${title} ${myLink}`;
+		const url = `https://t.me/share/url?url=${encodeURIComponent(myLink)}&text=${encodeURIComponent(text)}`;
+		window.open(url, "_blank");
+	}
+
+	// Facebook
+	function shareOnFacebook() {
+		const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(myLink)}`;
+		window.open(url, "_blank");
+	}
+
+	// Twitter
+	function shareOnTwitter() {
+		const url = `https://twitter.com/intent/tweet?url=${encodeURIComponent(myLink)}&text=${encodeURIComponent(title)}`;
+		window.open(url, "_blank");
+	}
+
+	// LinkedIn
+	function shareOnLinkedIn() {
+		const url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(myLink)}`;
+		window.open(url, "_blank");
+	}
+
+	// Pinterest
+	function shareOnPinterest() {
+		const image = "https://www.example.com/image.jpg"; // Replace with your image URL
+		const url = `https://pinterest.com/pin/create/button/?url=${encodeURIComponent(myLink)}&media=${encodeURIComponent(image)}&description=${encodeURIComponent(title)}`;
+		window.open(url, "_blank");
+	}
+
+	// Email
+	function shareViaEmail() {
+		const subject = `Check this out ${title} !`;
+		const body = `Hey, check this out: ${title}\n${myLink}`;
+		const url = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+		window.open(url, "_self"); // Opens in the same tab
+	}
+</script>
+
+<div id="shareModal" class="modal fade" role="dialog">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content">
+			<div class="modal-body">
+				<div class="row">
+					<div onclick="shareOnWhatsApp()" class="col-2">
+						<img style="width: 100%;" src="https://store-images.s-microsoft.com/image/apps.8453.13655054093851568.4a371b72-2ce8-4bdb-9d83-be49894d3fa0.7f3687b9-847d-4f86-bb5c-c73259e2b38e" />
+					</div>
+					<div onclick="shareOnTelegram()" class="col-2">
+						<img style="width: 100%;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Telegram_2019_Logo.svg/1200px-Telegram_2019_Logo.svg.png" />
+					</div>
+					<div onclick="shareOnFacebook()" class="col-2">
+						<img style="width: 100%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiXN9xSEe8unzPBEQOeAKXd9Q55efGHGB9BA&s" />
+					</div>
+					<div onclick="shareOnTwitter()" class="col-2">
+						<img style="width: 100%;margin-top: 6px;" src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_of_Twitter.svg/934px-Logo_of_Twitter.svg.png" />
+					</div>
+					<div onclick="shareOnPinterest()" class="col-2">
+						<img style="width: 100%;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRS-meG8HDT-iFgfeMdVxdjT_zYLvMVrd8Nw&s" />
+					</div>
+					<div onclick="shareViaEmail()" class="col-2">
+						<img style="width: 100%;" src="https://imaginethatcreative.net/blog/wp-content/uploads/2023/06/2250206.png" />
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-5 mb-2">
+				<div class="card">
+					<div class="card-body" style="position: relative;">
+						<img style="height: 400px; width: 100%;" src="@Url.Content("~/Products/")@product.ProductImage" id="imgProduct" />
+						<div data-bs-toggle="modal" data-bs-target="#shareModal" class="hover-content">
+							<i class="fas fa-share"></i> Share
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<style>
+				.card-body {
+					position: relative;
+				}
+
+				.hover-content {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					text-align: center;
+					color: white;
+					background: rgba(0, 0, 0, 0.5);
+					padding: 10px;
+					border-radius: 5px;
+					opacity: 0; /* Initially hidden */
+					transition: opacity 0.3s ease; /* Smooth fade-in effect */
+				}
+
+				.card-body:hover .hover-content {
+					opacity: 1; /* Show on hover */
+				}
+			</style>
+
+			<div class="col-lg-7 mb-2">
+				<div class="card">
+					<div class="card-body">
+						<table class="table table-bordered">
+							<tr>
+								<th>Category</th>
+								<td><span id="lblcategory">@product.Category</span></td>
+							</tr>
+							<tr>
+								<th>Brand</th>
+								<td><span id="lblBrand">@product.Brand</span></td>
+							</tr>
+							<tr>
+								<th>Name</th>
+								<td><span id="lblProductName">@product.Name</span></td>
+							</tr>
+							@{
+								if (product.isShowPrice == "true")
+								{
+									<tr>
+										<th>Price</th>
+										<td>
+											<span id="lblPrice">
+												@product.Price.Value.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("en-ZA"))
+											</span>
+										</td>
+									</tr>
+								}
+							}
+							<tr>
+								<th>Description</th>
+								<td><span style="font-size: 12px;" id="productDescription">@Html.Raw(product.Description)</span></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>

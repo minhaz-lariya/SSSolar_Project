@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewData["Title"] = "Products | SA Solar";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+
+<style>
+	.special-badge {
+		position: absolute;
+		top: 10px;
+		left: 10px; /* Use right: 10px; for the right corner */
+		background-color: green; /* Bright red background for visibility */
+		color: white; /* White text color */
+		padding: 5px 10px;
+		font-size: 10px;
+		font-weight: bold;
+		border-radius: 3px;
+		z-index: 10;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
+
+</style>
+
+<div class="container-fluid bg-dark">
+	<nav aria-label="breadcrumb" class="d-flex justify-content-end">
+		<ol class="breadcrumb text-white" style="margin-top: 15px;">
+			<li><a href="@Url.Content("~/")" class="text-white">Home</a> /&nbsp;</li>
+			<li><a id="link_prev" class="text-white">Products / @ViewBag.Brand</a></li>
+		</ol>
+	</nav>
+</div>
+
+
+<style>
+	/* Default styles for larger screens */
+.product-content h4 {
+    font-size: 16px; /* Or any default font size */
+}
+
+/* Media query for mobile devices */
+@@media (max-width: 768px) {
+    .product-content h4 {
+        font-size: 10px; /* Set font size to 10px for mobile */
+    }
+}
+
+</style>
+
+<section class="section-padding">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12">
+				<!-- Products -->
+				<div class="row">
+					<div class="tab-content" id="myTabContent">
+						<!-- Shop GridView -->
+						<div class="tab-pane fade shop-gridview active show" id="gridView" role="tabpanel" aria-labelledby="gridView-tab">
+							<div class="row" id="products">
+								<!-- Single -->
+								
+							</div>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<script>
+
+	function getProductMastersEdit(Id) {
+		$("#preloader").show();
+		$.get("@Url.Content("~/api/")detailProducts/" + Id)
+			.done(function (data, status) {
+				if (data.status == "OK") {
+					var Element = data.result;
+					$("#imgProduct").prop("src", "@Url.Content("~/Products/")" + Element.productImage);
+					$("#lblProductName").html(Element.brand + " " + Element.name);
+					$(".pricing").html(`<span style='font-size: 30px;'>${formatAsSouthAfricaRand(Element.price)}</span>`);
+					$("#productDescription").html(Element.description);
+					$("#lblcategory").html(Element.category);
+					$("#quickViewModal").modal("show");
+					$("#preloader").hide();
+				}
+				else {
+					alert("Something Went Wrong");
+				}
+			})
+			.fail(function () {
+				alert("Error");
+			});
+	}
+
+	function adjustFontSize() {
+		if ($(window).width() <= 768) {
+			var fontSize = '8px';
+			$('.product-content').css('padding', "0px");
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "150px");
+			$('.pricing span').css('font-size', '15px');
+			$('.product-overly-btn ul li').css('font-size', '10px');
+			
+		}
+		else {
+			var fontSize = '16px';
+			$('.product-content strong').css('font-size', fontSize);
+			$('.product-thumbnail img').css('height', "250");
+			$('.pricing span').css('font-size', '20px');
+			$('.product-overly-btn ul li').css('font-size', '15px');
+			$('.product-content').css('padding', "initial");
+		}
+	}
+
+	$(document).ready(function () {
+		
+		$(window).resize(function () {
+			adjustFontSize();
+		});
+		
+		const $loadingOverlay = $('<div class="loading-overlay">Loading...</div>').appendTo('body');
+		$loadingOverlay.show();
+		// Fetch products and display as usual
+		$.get("@Url.Content("~/api/categoriesProducts/")@ViewBag.Category/@ViewBag.Brand")
+			.done(function (data, status) {
+				console.log(data);
+				if (data.status == "OK") {
+					var data = data.result;
+
+					data.map((o, index) => {
+
+						var link = "https://api.whatsapp.com/send?phone=27742753464&text=" + encodeURIComponent(`Hello, I would like more information about ${o.category} category of product ${o.brand} ${o.name}`);
+
+						var productImageUrl = "@Url.Content("~/Products/")" + o.productImage;
+						var QuickLink = "@Url.Content("~/Products/Details/")" + o.id + "/" + o.name.replaceAll(" ", "-");
+
+						var specialTag = "";
+
+						if (o.isSpecialProduct == "Yes") {
+							specialTag = `<div class="sale-badge"><span>Special</span></div>`;
+						}
+
+						$("#products").append(`
+									<div class="col-md-3 col-6 mb-30 d-flex">
+										<div class="product-item">
+											${specialTag}
+											<div class="product-thumbnail">
+												<img style="width: 100%; height: 250px;" src="${productImageUrl}" alt="product">
+												<div class="product-overly-btn">
+													<ul>
+														<li><a target="_blank" href="${link}"><i class="fas fa-comment"></i><span>Inquiry on Whatsapp</span></a></li>
+														<li><a href="${QuickLink}"><i class="far fa-eye"></i><span>Quick view</span></a></li>
+													</ul>
+												</div>
+											</div>
+											<div class="product-content">
+												<strong>${o.name}</strong>
+												<div class="pricing">
+													${o.isShowPrice === "true" ? `<span>${formatAsSouthAfricaRand(o.price)}</span>` : ""}
+												</div>
+											</div>
+										</div>
+									</div>`);
+						$loadingOverlay.remove();
+					adjustFontSize();
+					});
+
+				} else {
+					$loadingOverlay.remove();
+					alert("Something Went Wrong");
+				}
+
+			})
+			.fail(function () {
+				alert("Error");
+			});
+
+	});
+</script>
+
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-labelledby="quickViewModal" aria-hidden="true">
+	<div class="modal-dialog quick-view-modal">
+		<div class="modal-content quick-view-modal-content">
+			<div class="row">
+				<div class="col-md-12 mb-2 text-right">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="col-lg-6 col-md-6">
+					<img id="imgProduct" style="width: 100%; height: 300px;" alt="img">
+				</div>
+				<div class="col-lg-6 col-md-6">
+					<div class="quickview-modal-content-full">
+						<h3 style="font-size: 15px;" id="lblProductName"></h3>
+						<div class="cate">
+							<span><strong>Categories:</strong></span>
+							<span id="lblcategory"></span>
+						</div>
+						<div class="pricing" style="margin-top: -20px;"></div>
+						<p style="text-align:justify;font-size:15px;line-height:1.2;height:200px; overflow: scroll;overflow-x: hidden; padding-right: 10px;" id="productDescription"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

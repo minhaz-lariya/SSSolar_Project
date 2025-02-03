@@ -1,0 +1,169 @@
+﻿
+@{
+    ViewData["Title"] = "Categories | SA SOLAR EXPERTS";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<input type="hidden" id="txtId" value="0" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <b>Catgeory</b><label class="error" id="lblErrCategory"></label>
+                        <input type="text" id="txtCategory" name="txtCategory" placeholder="Catgeory" class="form-control" />
+                    </div>
+                    <div class="col-md-12 mb-2">
+                        <button type="button" id="btnSave" class="btn btn-primary waves-effect waves-light">Save</button>
+                        <button type="reset" onclick="cancleForm()" class="btn btn-danger">Cancle</button>
+                    </div>
+                    <div class="col-md-12 mb-2 table-responsive">
+                        <table id="datatable" border="1" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th style="width: 50px;"></th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    $(document).ready(function () {
+        $("#btnSave").click(function () {
+            var ID = $("#txtId").val();
+            var Cnt = 0;
+            Cnt = IsEmpty("txtCategory", "lblErrCategory", Cnt);
+
+            if (Cnt == 0) {
+                $("#btnSave").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                $("#btnSave").prop("disabled", true);
+
+                var jsonRequest = {
+                    "Name": $("#txtCategory").val().toUpperCase(),
+                    "Id": ID
+                };
+
+                var requestURL = "@Url.Content("~/api/AddCategory")";
+
+                if (ID != 0) {
+                    requestURL = "@Url.Content("~/api/EditCategory")";
+                }
+
+                $.ajax({
+                    url: requestURL,
+                    type: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(jsonRequest),
+                    success: function (response) {
+                        if (response.status == "OK") {
+                            dataTable.ajax.reload(null, false);
+                            $("#btnSave").html("Save");
+                            $("#btnSave").prop("disabled", false);
+                            cancleForm();
+                        }
+                        console.log(response.status);
+                    }
+                });
+            }
+        });
+    });
+
+    function cancleForm() {
+        $("#txtId").val("0");
+        $("#txtCategory").val("");
+        $("#btnSave").html("Save");
+    }
+
+    function getProductMastersEdit(Id) {
+        const $loadingOverlay = $(`<div class="loading-overlay"><i class='fas fa-spinner fa-pulse'></i>&nbsp;Loading...</div>`).appendTo('body');
+        $loadingOverlay.show();
+        $.get("@Url.Content("~/api/")detailCategory/" + Id)
+            .done(function (data, status) {
+                if (data.status == "OK") {
+                    var Element = data.result;
+                    $("#txtId").val(Id);
+                    $("#txtCategory").val(Element.name);
+                    $("#btnSave").html("Update data");
+                    $loadingOverlay.remove();
+                }
+                else {
+                    $loadingOverlay.remove();
+                    alert("Something Went Wrong");
+                }
+            })
+            .fail(function () {
+                $loadingOverlay.remove();
+                alert("Error");
+            });
+    }
+
+    function DeleteData(Id, o) {
+        if (confirm("Are You Sure Want to Delete this Record..!!")) {
+            var currentRow = o.parentNode.parentNode.rowIndex;
+            $("#datatable tr").eq(currentRow).addClass("selected");
+
+            var Path = "@Url.Content("~/api/")deleteCategory/" + Id;
+
+            $.ajax({
+                url: Path,
+                type: "delete",
+                processData: false,  // tell jQuery not to process the data
+                contentType: false   // tell jQuery not to set contentType
+            }).done(function (data) {
+                console.log(data);
+
+                if (data.status == "OK") {
+                    dataTable.ajax.reload(null, false);
+                }
+            });
+        }
+    }
+
+    var dataTable = $("#datatable").DataTable({
+        "ajax": {
+            "url": "@Url.Content("~/api/Categories")",
+            "dataSrc": "result"
+        },
+        "aoColumns": [
+            { mData: 'name' },
+            { mData: 'id' },
+            { mData: 'id' }
+        ],
+        "paginate": true,
+        "retrieve": true,
+        "responsive": false,
+        "destroy": true,
+        "autoWidth": false,
+        'columnDefs': [
+            {
+                'targets': 1,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    var Edit = "getProductMastersEdit('" + data + "')";
+                    return '<i class="fas fa-edit text-primary" style="font-size: 25px;" data-toggle="modal" data-target="#ProductMaster" onclick="' + Edit + '" ></i>';
+                }
+            },
+            {
+                'targets': 2,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+                'render': function (data, type, full, meta) {
+                    var Delete = "DeleteData('" + data + "', this)";
+                    return '<i class="fas fa-trash text-primary" style="font-size: 25px;" onclick="' + Delete + '" ></i>';
+                }
+            }
+        ]
+    });
+</script>

@@ -1,0 +1,292 @@
+﻿
+@{
+    ViewData["Title"] = "Special Packages | SA SOLAR EXPERTS";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<input type="hidden" id="txtId" value="0" />
+<input type="hidden" id="txtFile" value="" />
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12 mb-2">
+                        <button type="button" class="btn btn-primary waves-effect waves-light" data-bs-toggle="modal" data-bs-target="#PackagesModal"> New Packages </button>
+                    </div>
+                    <div class="col-md-12 mb-2 table-responsive">
+                        <table border="1" id="datatable" class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th>Date From</th>
+                                    <th>Date To</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="PackagesModal" data-bs-keyboard="false" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <b>Title</b><label class="error" id="lblErrTitle"></label>
+                        <input type="text" class="form-control" name="txtTitle" id="txtTitle" value="" placeholder="Package Title" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <b>Price</b><label class="error" id="lblErrPrice"></label>
+                        <input type="text" class="form-control" name="txtPrice" id="txtPrice" value="" placeholder="Product Price" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <b>Photo</b><label class="error" id="lblErrPhoto"></label>
+                        <input type="file" class="form-control" name="fupPhoto" id="fupPhoto" value="" placeholder="Product Price" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <b>Date From</b><label class="error" id="lblErrDateFrom"></label>
+                        <input type="date" class="form-control" name="txtDateFrom" id="txtDateFrom" value="" placeholder="Product Name" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <b>Date To</b><label class="error" id="lblErrDateTo"></label>
+                        <input type="date" class="form-control" name="txtDateTo" id="txtDateTo" value="" placeholder="Product Name" />
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <b>Description</b><label class="error" id="lblErrDescription"></label>
+                        <textarea class="form-control" name="txtDescription" id="txtDescription" value="" placeholder="Product Description"></textarea>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <label class="form-control">
+                            <input type="checkbox" id="chkStatus" /> &nbsp;Is Active
+                        </label>
+                    </div>
+                    <div class="col-md-12 mb-1">
+                        <button type="button" class="btn btn-success" id="btnSave" name="btnSave">Save</button>
+                        <button type="reset" onclick="cancleForm()" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        let base64String = null;
+        $("#btnSave").click(function () {
+            var ID = $("#txtId").val();
+            var Cnt = 0;
+            Cnt = IsEmpty("txtTitle", "lblErrTitle", Cnt);
+            Cnt = IsEmpty("txtPrice", "lblErrPrice", Cnt);
+            Cnt = IsEmpty("txtDateFrom", "lblErrDateFrom", Cnt);
+            Cnt = IsEmpty("txtDateTo", "lblErrDateTo", Cnt);
+            Cnt = IsEmpty("txtDescription", "lblErrDescription", Cnt);
+
+            if (ID == 0) {
+                Cnt = FileValidtion("fupPhoto", "lblErrPhoto", Cnt);
+            }
+
+            if (Cnt == 0) {
+                $("#btnSave").html("<i class='fas fa-spinner fa-pulse'></i>&nbsp;Please Wait....");
+                $("#btnSave").prop("disabled", true);
+
+                var jsonRequest = {
+                    "Title": $("#txtTitle").val(),
+                    "DateFrom": $("#txtDateFrom").val(),
+                    "DateTo": $("#txtDateTo").val(),
+                    "Description": $("#txtDescription").val(),
+                    "Price": $("#txtPrice").val(),
+                    "imgPath": (base64String != null ? base64String.replace(/^data:image\/[a-zA-Z]+;base64,/, "") : null),
+                    "Status": $('#chkStatus').is(':checked') ? "true" : "false",
+                    "Id": ID
+                };
+
+                var requestURL = "@Url.Content("~/api/AddPackages")";
+
+                if (ID != 0) {
+                    requestURL = "@Url.Content("~/api/UpdatePackages")";
+                }
+
+                console.log(jsonRequest);
+
+                $.ajax({
+                    url: requestURL,
+                    type: "post",
+                    contentType: "application/json",
+                    data: JSON.stringify(jsonRequest),
+                    success: function (response) {
+                        if (response.status == "OK") {
+                            SuccessAlert("Package Successfully Saved");
+                            dataTable.ajax.reload(null, false);
+                            $("#PackagesModal").modal("hide");
+                            cancleForm();
+                        }
+                        else {
+                            $("#btnSave").html("Save");
+                            $("#btnSave").prop("disabled", false);
+                        }
+                        console.log(response.result);
+                    }
+                });
+            }
+        });
+
+        $("#fupPhoto").change(function () {
+            var file = this.files[0];
+            if (file) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    base64String = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    });
+
+    function cancleForm() {
+        $("#txtId").val("0");
+        $("#txtDateFrom").val("");
+        $("#txtDateTo").val("");
+        $("#txtPrice").val("");
+        $("#txtTitle").val("");
+        $("#txtDescription").val("");
+        $("#btnSave").html("Save");
+    }
+
+    function getProductMastersEdit(Id) {
+        const $loadingOverlay = $(`<div class="loading-overlay"><i class='fas fa-spinner fa-pulse'></i>&nbsp;Loading...</div>`).appendTo('body');
+        $loadingOverlay.show();
+        $.get("@Url.Content("~/api/")detailPackages/" + Id)
+            .done(function (data, status) {
+                if (data.status == "OK") {
+                    var Element = data.result;
+                    $("#txtId").val(Id);
+                    $("#txtTitle").val(Element.title);
+                    $("#txtDateFrom").val(setInputData(Element.dateFrom));
+                    $("#txtDateTo").val(setInputData(Element.dateTo));
+                    $("#txtPrice").val(Element.price);
+                    $("#txtDescription").val(Element.description);
+
+                    if (Element.status == "true"){
+                        $("#chkStatus").prop("checked", true);
+                    }
+                    $loadingOverlay.remove();
+                    $("#btnSave").html("Update data");
+                    $("#PackagesModal").modal("show");
+                }
+                else {
+                    $loadingOverlay.remove();
+                    alert("Something Went Wrong");
+                }
+            })
+            .fail(function () {
+                $loadingOverlay.remove();
+                alert("Error");
+            });
+    }
+
+
+
+    function DeleteData(Id, o) {
+        if (confirm("Are You Sure Want to Delete this Record..!!")) {
+            var currentRow = o.parentNode.parentNode.rowIndex;
+            $("#datatable tr").eq(currentRow).addClass("selected");
+
+            var Path = "@Url.Content("~/api/")deletePackages/" + Id;
+
+            $.ajax({
+                url: Path,
+                type: "delete",
+                processData: false,  // tell jQuery not to process the data
+                contentType: false   // tell jQuery not to set contentType
+            }).done(function (data) {
+                console.log(data);
+
+                if (data.status == "OK") {
+                    dataTable.ajax.reload(null, false);
+                }
+            });
+        }
+    }
+
+    var dataTable = $("#datatable").DataTable({
+        "ajax": {
+            "url": "@Url.Content("~/api/AllPackages")",
+            "dataSrc": "result"
+        },
+        "aoColumns": [
+            { mData: 'imgPath' },
+            { mData: 'title' },
+            { mData: 'description' },
+            { mData: 'price' },
+            { mData: 'dateFrom' },
+            { mData: 'dateTo' },
+            { mData: 'status' },
+            { mData: 'id' },
+            { mData: 'id' }
+        ],
+        "paginate": true,
+        "retrieve": true,
+        "responsive": false,
+        "destroy": true,
+        "autoWidth": false,
+        'columnDefs': [
+            {
+                'targets': 0,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return '<img style="height: 50px; width: 50px;" src="@Url.Content("~/SpecialPackages/")' + data + '" />';
+                }
+            },
+            {
+                'targets': [4, 5],
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return `<span style="display: none;">sortDateTime(${data})</span>` + setData(data);
+                }
+            },
+            {
+                'targets': 6,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    return data === true ? `<i style="font-size: 25px;" class='fas fa-eye'></i>` : `<i style="font-size: 25px;" class='fas fa-eye-slash'></i>`;
+                }
+            },
+            {
+                'targets': 7,
+                'searchable': false,
+                'orderable': false,
+                'className': 'text-center',
+                'render': function (data, type, full, meta) {
+                    var Edit = "getProductMastersEdit('" + data + "')";
+                    return '<i class="fas fa-edit" style="font-size: 25px;" data-toggle="modal" data-target="#ProductMaster" onclick="' + Edit + '" ></i>';
+                }
+            },
+            {
+                'targets': 8,
+                'searchable': false,
+                'orderable': false,
+                'className': 'dt-body-center',
+                'render': function (data, type, full, meta) {
+                    var Delete = "DeleteData('" + data + "', this)";
+                    return '<i class="fas fa-trash" style="font-size: 25px;" onclick="' + Delete + '" ></i>';
+                }
+            }
+        ]
+    });
+</script>
