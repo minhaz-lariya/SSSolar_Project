@@ -141,7 +141,6 @@
             .done(function (data, status) {
                 if (data.status == "OK") {
                     var notifiations = data.result;
-
                     notifiations.map(o => {
                         $("#notificationList").append(`&middot;&nbsp;${o.message}`);
                     });
