@@ -2,7 +2,7 @@
     ViewData["Title"] = "Home | SA Solar";
     Layout = "~/Views/Shared/_UserLayout.cshtml";
 }
-
+@model IEnumerable<SSSolar_Project.Models.Sliders>
 <script>
     let sliderLength = 0;
     function getData() {
@@ -124,9 +124,25 @@
 </style>
 
 <div id="SlidersImg" class="row mb-5">
-    <center>
-        <img src="@Url.Content("~/Photos/pleaseWait.gif")" />
-    </center>
+    @if (Model.Any())
+    {
+        var index = 0;
+        foreach (var slider in Model)
+        {
+            <div id="slider@index" class="col-md-12 position-relative sliderImages" style="display: @(index == 0 ? "block" : "none");">
+                <img src="@Url.Content("~/Sliders/")@slider.imgPath" class="slider-img" alt="Slider Image" />
+                <div class="slider-text">
+                    <h4>@slider.Title</h4>
+                    <h6>@slider.Description</h6>
+                </div>
+            </div>
+            index++;
+        }
+    }
+    else
+    {
+        <p>No sliders available.</p>
+    }
 </div>
 
 <div class="container-fluid mb-5">

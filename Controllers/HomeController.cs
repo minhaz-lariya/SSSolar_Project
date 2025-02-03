@@ -18,9 +18,10 @@ namespace SSSolar_Project.Controllers
 		}
 
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
         {
-            return View();
+            var Data = await _DBContext.Sliders.ToListAsync();
+            return View(Data);
         }
 
 		[Route("AboutUs")]
