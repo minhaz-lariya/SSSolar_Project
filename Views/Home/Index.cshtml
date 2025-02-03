@@ -4,39 +4,7 @@
 }
 @model IEnumerable<SSSolar_Project.Models.Sliders>
 <script>
-    let sliderLength = 0;
-    function getData() {
-        $("#preloader").show();
-        $.get("@Url.Content("~/api/showSliders")")
-            .done(function (data, status) {
-                if (data.status == "OK") {
-                    $("#SlidersImg").empty();
-                    var jsonResponse = data.result;
-                    jsonResponse.map((o, index) => {
-                        $("#SlidersImg").append(`<div id='slider${index}' class="col-md-12 position-relative sliderImages">
-                                                        <img src="@Url.Content("~/Sliders/")${o.imgPath}" class="slider-img" />
-                                                        <div class="slider-text">
-                                                            <h4>${o.title}</h4>
-                                                            <h6>${o.description}</h6>
-                                                        </div>
-                                                    </div>`);
-                        sliderLength++;
-                    });
-                    chnageSlider();
-                    $(".sliderImages").hide();
-                    $("#slider0").show();
-                    $("#preloader").hide();
-                }
-                else {
-                    alert("Something Went Wrong");
-                }
-            })
-            .fail(function () {
-                alert("Error");
-            });
-    }
-
-
+    
     function chnageSlider() {
         var currentIndex = 1;
         setInterval(() => {
@@ -54,8 +22,8 @@
     }
 
     $(document).ready(function () {
-        getData();
         getNotification();
+        specialPackages();
     });
 
 </script>
@@ -163,7 +131,7 @@
                 }
             })
             .fail(function () {
-                alert("Error");
+                getNotification();
             });
     }
 </script>
@@ -236,7 +204,10 @@
         }
     }
   
-    $(document).ready(function () {
+
+
+
+    function specialPackages(){
         $.get("@Url.Content("~/api/AllProducts")")
             .done(function (data, status) {
                 console.log(data);
@@ -301,9 +272,11 @@
                 }
             })
             .fail(function () {
-                alert("Error");
+                specialPackages();
             });
-    });
+    }
+
+
 
 </script>
 
